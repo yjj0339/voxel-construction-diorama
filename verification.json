@@ -1,0 +1,123 @@
+{
+  "initial": {
+    "revision": "160",
+    "instances": 5893,
+    "workers": 39,
+    "drawCalls": 200,
+    "triangles": 92338,
+    "fps": 120,
+    "dpr": 1,
+    "geometries": 60,
+    "textures": 21,
+    "vehicleAudit": {
+      "ok": true,
+      "violations": [],
+      "roadLength": 75.82477796076938,
+      "minimumLaneGap": 18.30194826979988,
+      "minObservedGap": 18.30750926979988,
+      "minimumVehicleCenterDistance": 13.810571407696573,
+      "bucketFloorClearance": [
+        0.29076654578489025,
+        0.2739209561825653
+      ],
+      "steelBuildingClearance": 1.2823586616580815,
+      "loaderEnvelope": {
+        "x": [
+          -8.6,
+          -5.1
+        ],
+        "z": [
+          4.37,
+          5.33
+        ]
+      }
+    },
+    "workerAudit": {
+      "count": 39,
+      "instances": 1417,
+      "drawCalls": 1,
+      "minimumSeparation": 0.23999999999999994,
+      "overlaps": []
+    }
+  },
+  "rainPerformance": {
+    "fps": 120,
+    "medianFrameMs": 8.300000000000182,
+    "p95FrameMs": 8.5
+  },
+  "interactions": {
+    "rain": true,
+    "speed": 2,
+    "dust": 2,
+    "day": true,
+    "physicalKnobSpeed": 4,
+    "physicalDayKnob": true,
+    "physicalDustKnob": true,
+    "pauseHoldsSim": true,
+    "dragChangesCamera": true,
+    "wheelZooms": true,
+    "immersive": true
+  },
+  "safety": {
+    "violations": [],
+    "minimumGap": 3.444042202826762,
+    "minBucket": 0.2528080583036483,
+    "states": [
+      "loading",
+      "dumping",
+      "drive"
+    ],
+    "workers": {
+      "count": 39,
+      "instances": 1417,
+      "drawCalls": 1,
+      "minimumSeparation": 0.23999999999999994,
+      "overlaps": []
+    }
+  },
+  "performanceStats": {
+    "medianFrameMs": 8.300000000001091,
+    "p95FrameMs": 8.5,
+    "revision": "160",
+    "instances": 5893,
+    "workers": 39,
+    "drawCalls": 200,
+    "triangles": 92158,
+    "fps": 120,
+    "dpr": 1,
+    "geometries": 61,
+    "textures": 21,
+    "vehicleAudit": {
+      "ok": true,
+      "violations": [],
+      "roadLength": 75.82477796076938,
+      "minimumLaneGap": 7.33784492636093,
+      "minObservedGap": 4.226799999999969,
+      "minimumVehicleCenterDistance": 7.0320469413856435,
+      "bucketFloorClearance": [
+        2.6799999999999997,
+        0.9525843950584971
+      ],
+      "steelBuildingClearance": 1.2210698438801213,
+      "loaderEnvelope": {
+        "x": [
+          -8.6,
+          -5.1
+        ],
+        "z": [
+          4.37,
+          5.33
+        ]
+      }
+    },
+    "workerAudit": {
+      "count": 39,
+      "instances": 1417,
+      "drawCalls": 1,
+      "minimumSeparation": 0.23999999999999994,
+      "overlaps": []
+    }
+  },
+  "errors": [],
+  "network": []
+}

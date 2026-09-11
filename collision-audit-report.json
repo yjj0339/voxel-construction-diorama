@@ -1,0 +1,20 @@
+{
+  "generatedAt": "2026-09-11T09:29:19.918Z",
+  "testedFile": "D:\\codexAI\\voxel-construction\\筑造之间-体素工地沙盘.html",
+  "fileModifiedAt": "2026-09-11T09:27:33.761Z",
+  "scope": "All articulated worker cuboids and both excavators including tracks, turret, boom, bucket and visible soil versus all direct world static cuboid instances. 101 poses; exact OBB narrow phase. Cylinders, particles, intentionally connected machine components and moving-versus-moving pairs are outside this audit.",
+  "pass": true,
+  "errors": [],
+  "staticCuboids": 4792,
+  "workerParts": 1417,
+  "samples": 101,
+  "simulatedTimeRange": [
+    0,
+    148.3
+  ],
+  "toleranceMetres": 0.003,
+  "dynamicBoxesTested": 157671,
+  "broadPhaseHits": 0,
+  "confirmedHits": 0,
+  "issues": []
+}

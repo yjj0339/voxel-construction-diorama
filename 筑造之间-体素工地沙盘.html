@@ -2,21 +2,102 @@
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#252b2e">
+<meta name="description" content="一方沙盘，一座正在生长的城市。可触摸环视、缩放与平移的体素微缩建筑工地，拥有昼夜循环与暴雨天气。">
 <title>筑造之间 · 微缩工地沙盘</title>
 <style>
-*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden}body{background:#262b30;color:#eee9df;font-family:Inter,"Segoe UI","Microsoft YaHei",sans-serif}button{font:inherit}#scene{position:absolute;inset:0;width:100%;height:100%;outline:0;touch-action:none}canvas{display:block}.vignette{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at 50% 48%,transparent 48%,#12191c35 100%)}header{position:absolute;left:38px;top:30px;pointer-events:none}.eyebrow{display:flex;align-items:center;gap:10px;font-size:10px;letter-spacing:3px;color:#ceb780;font-weight:600}.mark{height:18px;width:18px;display:inline-block;border:1px solid #cbb376;transform:rotate(30deg);position:relative}.mark:after{content:"";position:absolute;inset:4px;border:1px solid #cbb376}h1{font-weight:500;font-size:34px;letter-spacing:7px;margin:14px 0 9px;text-shadow:0 2px 10px #0005}.subtitle{color:#b8bdbb;font-size:11px;letter-spacing:2.2px}.topright{position:absolute;right:34px;top:30px;display:flex;align-items:center;gap:10px}.glass{background:linear-gradient(145deg,#fbf9ef18,#e9edec08);backdrop-filter:blur(18px);border:1px solid #f4f0df22;box-shadow:0 8px 24px #0001;border-radius:10px}.clock{padding:10px 17px;display:flex;align-items:center;gap:13px}.sunicon{color:#edc268;font-size:21px}#time{font-size:17px;letter-spacing:1px;font-variant-numeric:tabular-nums}.phase{font-size:10px;letter-spacing:1px;color:#c2c9c8;margin-top:2px}.iconbtn{cursor:pointer;color:#dddcd4;background:#ffffff0b;border:1px solid #ffffff22;border-radius:9px;padding:12px;line-height:1;font-size:17px;transition:.2s}.iconbtn:hover,.iconbtn.active{background:#d3b56b33;border-color:#d3b56b99;color:#ffda8f}.side-note{position:absolute;left:38px;bottom:102px;pointer-events:none}.side-note .number{font-size:10px;letter-spacing:2px;color:#d1b671;border-left:2px solid #d1b671;padding-left:10px}.side-note p{font-size:12px;color:#c0c6c3;line-height:1.8;margin:11px 0 0}.legend{display:flex;gap:16px;margin-top:11px;font-size:9px;color:#a9b4b2;letter-spacing:.5px}.legend i{display:inline-block;width:5px;height:5px;background:#d8b46a;border-radius:50%;margin-right:6px}.legend i.blue{background:#77adbb}.legend i.green{background:#93b79a}.toolbar{position:absolute;right:34px;bottom:95px;width:185px;padding:15px 16px}.toolbar-title{font-size:9px;letter-spacing:2px;color:#b8bdb8;margin-bottom:10px}.control{display:flex;width:100%;align-items:center;justify-content:space-between;border:0;background:transparent;color:#e4e3da;padding:10px 0;cursor:pointer;text-align:left;font-size:11px;border-bottom:1px solid #ffffff10}.control:last-child{border:0}.control span:last-child{color:#dfc381;font-size:10px;font-variant-numeric:tabular-nums}.control:hover{color:#ffce6c}.footer{position:absolute;left:38px;right:34px;bottom:24px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid #ffffff1b;padding-top:16px;font-size:10px;color:#aeb8b7;letter-spacing:.7px}.hints{display:flex;gap:22px;align-items:center}.key{border:1px solid #ffffff28;padding:3px 6px;border-radius:4px;margin-right:5px;color:#d6dad3;font-size:9px}.live{display:flex;align-items:center;gap:8px;font-size:9px;letter-spacing:1.5px}.dot{width:5px;height:5px;background:#9bbc90;box-shadow:0 0 8px #9bbc9070;border-radius:50%}#fps{margin-left:12px;font-size:10px;letter-spacing:.5px;color:#8f9a98}#toast{position:absolute;left:50%;top:24px;transform:translate(-50%,-15px);background:#1e272bed;border:1px solid #bba66b6b;color:#ecdba8;font-size:12px;padding:12px 22px;border-radius:7px;opacity:0;pointer-events:none;transition:.3s}#toast.show{opacity:1;transform:translate(-50%,0)}#tooltip{position:absolute;display:none;pointer-events:none;background:#eee7d7eb;border:1px solid #fff7;color:#333c3e;padding:9px 13px;border-radius:6px;font-size:11px;box-shadow:0 4px 16px #0003}#loading{position:absolute;inset:0;background:#252a2c;display:grid;place-items:center;z-index:20;transition:opacity .6s}.loading-inner{text-align:center}.loading-inner h2{font-weight:400;letter-spacing:8px;font-size:26px}.loading-inner p{font-size:11px;letter-spacing:2px;color:#b9b3a3}.loading-line{width:200px;height:1px;background:#ffffff20;margin:25px auto;overflow:hidden}.loading-line:after{content:"";display:block;width:90px;height:1px;background:#dac181;animation:load 1.2s infinite}@keyframes load{from{transform:translateX(-90px)}to{transform:translateX(200px)}}body.clean header,body.clean .topright,body.clean .side-note,body.clean .toolbar,body.clean .footer{display:none}#error{display:none;position:absolute;inset:25%;background:#282c2e;padding:30px;border:1px solid #b89b67;z-index:30;line-height:1.8}.small{font-size:10px;color:#aab5b2}@media(max-width:800px){header{left:20px;top:22px}h1{font-size:25px}.subtitle{font-size:9px}.eyebrow{font-size:8px}.topright{right:16px;top:20px}.clock{padding:8px 10px}.iconbtn{padding:10px}.side-note{display:none}.toolbar{right:16px;width:157px;bottom:86px;padding:9px 12px}.footer{left:20px;right:16px;bottom:17px}.hints{gap:8px}.live{display:none}.hints span{font-size:9px}}@media(max-width:500px){.topright{top:122px}.toolbar{bottom:80px}.footer .hints{flex-wrap:wrap;row-gap:9px}.subtitle{letter-spacing:1px}}
+:root{color-scheme:dark;--ink:#f0ece1;--muted:#c4cbc7;--gold:#edd193;--safe-top:env(safe-area-inset-top,0px);--safe-bottom:env(safe-area-inset-bottom,0px);--safe-left:env(safe-area-inset-left,0px);--safe-right:env(safe-area-inset-right,0px)}
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;overscroll-behavior:none}body{height:var(--app-height,100dvh);background:#262b30;color:var(--ink);font-family:Inter,"Segoe UI","Microsoft YaHei",sans-serif;-webkit-text-size-adjust:100%}button,input,summary{font:inherit}button{touch-action:manipulation;-webkit-tap-highlight-color:transparent}button:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid #ffdc96;outline-offset:4px}button:disabled{cursor:default;opacity:.48}button:disabled:hover{color:var(--muted);background:transparent}#scene{position:absolute;inset:0;width:100%;height:100%;outline:0;touch-action:none;user-select:none;-webkit-user-select:none}canvas{display:block}svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}.vignette{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at 50% 48%,transparent 48%,#12191c35 100%)}
+header{position:absolute;left:max(38px,var(--safe-left));top:calc(30px + var(--safe-top));pointer-events:none}.eyebrow{display:flex;align-items:center;gap:10px;font-size:10px;letter-spacing:3px;color:#dfc68c;font-weight:600}.mark{height:18px;width:18px;display:inline-block;border:1px solid #cbb376;transform:rotate(30deg);position:relative}.mark:after{content:"";position:absolute;inset:4px;border:1px solid #cbb376}h1{font-weight:500;font-size:34px;letter-spacing:7px;margin:14px 0 9px;text-shadow:0 2px 10px #0005}.subtitle{color:var(--muted);font-size:11px;letter-spacing:2.2px}.topright{position:absolute;right:calc(212px + var(--safe-right));top:calc(30px + var(--safe-top));pointer-events:none}.glass{background:linear-gradient(145deg,#343b3deb,#242c2be8);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);border:1px solid #f4f0df2b;box-shadow:0 8px 24px #0002;border-radius:12px}.clock{padding:10px 16px;display:flex;align-items:center;gap:12px}.sunicon{color:#edc268;font-size:21px;min-width:22px;text-align:center}#time{font-size:17px;letter-spacing:1px;font-variant-numeric:tabular-nums}.phase{font-size:10px;letter-spacing:1px;color:var(--muted);margin-top:2px}
+.action-dock{position:absolute;right:calc(34px + var(--safe-right));top:calc(30px + var(--safe-top));display:flex;gap:6px;padding:4px;z-index:5}.dock-action{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;min-width:46px;min-height:48px;padding:8px;border:1px solid transparent;border-radius:8px;background:transparent;color:#e4e4da;cursor:pointer;transition:background .16s,color .16s,border-color .16s}.dock-action span{font-size:10px;line-height:1.15}.dock-action:hover,.dock-action.active,.dock-action[aria-expanded="true"]{background:#d3b56b26;border-color:#d3b56b65;color:#ffe0a0}#controlsButton{display:none}.side-note{position:absolute;left:38px;bottom:102px;pointer-events:none}.side-note .number{font-size:10px;letter-spacing:2px;color:#ddc58b;border-left:2px solid #d1b671;padding-left:10px}.side-note p{font-size:12px;color:var(--muted);line-height:1.8;margin:11px 0 0}.legend{display:flex;gap:16px;margin-top:11px;font-size:9px;color:#bcc6c2;letter-spacing:.5px}.legend i{display:inline-block;width:5px;height:5px;background:#d8b46a;border-radius:50%;margin-right:6px}.legend i.blue{background:#77adbb}.legend i.green{background:#93b79a}
+.toolbar{position:absolute;right:calc(34px + var(--safe-right));bottom:calc(90px + var(--safe-bottom));width:220px;max-height:calc(var(--app-height,100dvh) - 200px - var(--safe-top) - var(--safe-bottom));padding:14px 16px 10px;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#8c887366 transparent;z-index:6}.panel-heading{display:flex;align-items:center;justify-content:space-between;min-height:28px;margin-bottom:6px}.toolbar-title{font-size:10px;letter-spacing:2px;color:var(--muted);margin:0;font-weight:500}.panel-close{display:none;align-items:center;justify-content:center;min-width:44px;min-height:44px;border:0;border-radius:9px;background:transparent;color:var(--muted);cursor:pointer}.panel-close:hover{background:#ffffff12;color:white}.control-grid{display:grid;grid-template-columns:1fr}.control{display:flex;min-width:0;width:100%;min-height:44px;gap:10px;align-items:center;justify-content:space-between;border:0;background:transparent;color:#ecece1;padding:10px 0;cursor:pointer;text-align:left;font-size:12px;border-bottom:1px solid #ffffff13}.control span:last-child{color:var(--gold);font-size:11px;font-variant-numeric:tabular-nums;white-space:nowrap}.control:hover{color:#ffda8f}.control:disabled span:last-child{color:var(--muted)}.time-control{padding:13px 0 6px;border-top:1px solid #ffffff13;margin-top:8px}.time-control label{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:12px}.time-control label span{color:var(--gold);font-size:11px;font-variant-numeric:tabular-nums}.time-control input{display:block;width:100%;height:44px;margin:3px 0 0;accent-color:#e7c982;touch-action:pan-y;cursor:pointer}.time-control p{margin:0;font-size:10px;line-height:1.6;color:var(--muted)}.help{margin-top:5px;color:var(--muted);font-size:11px;border-top:1px solid #ffffff13}.help summary{cursor:pointer;min-height:44px;display:flex;align-items:center;gap:7px;list-style:none}.help summary::-webkit-details-marker{display:none}.help summary:before{content:"+";font-size:16px;color:var(--gold)}.help[open] summary:before{content:"−"}.help p{margin:0 0 10px;line-height:1.85}.help kbd{font:inherit;color:var(--gold)}.touch-only{display:none}
+.footer{position:absolute;left:38px;right:34px;bottom:calc(24px + var(--safe-bottom));display:flex;align-items:center;justify-content:space-between;gap:12px;border-top:1px solid #ffffff26;padding-top:16px;font-size:10px;color:var(--muted);letter-spacing:.7px;pointer-events:none}.hints{display:flex;gap:20px;align-items:center}.key{border:1px solid #ffffff36;padding:3px 6px;border-radius:4px;margin-right:5px;color:#e1e4d8;font-size:9px}.live{display:flex;align-items:center;gap:8px;font-size:9px;letter-spacing:1.5px}.dot{width:5px;height:5px;background:#a9d79e;box-shadow:0 0 8px #9bbc9070;border-radius:50%}#fps{margin-left:12px;font-size:10px;letter-spacing:.5px;color:#c0c9c3}.small{font-size:10px;color:var(--muted)}
+#exitImmersiveButton{display:none;position:absolute;right:calc(18px + var(--safe-right));top:calc(18px + var(--safe-top));min-height:44px;align-items:center;gap:8px;padding:10px 14px;color:var(--ink);font-size:12px;cursor:pointer;z-index:8}body.clean header,body.clean .topright,body.clean .side-note,body.clean .toolbar,body.clean .footer,body.clean .action-dock{display:none}body.clean #exitImmersiveButton{display:flex}#toast{position:absolute;left:50%;top:calc(104px + var(--safe-top));max-width:calc(100% - 32px);width:max-content;transform:translate(-50%,-10px);background:#1e272bf5;border:1px solid #bba66b6b;color:#f1dfae;font-size:12px;line-height:1.6;padding:11px 18px;border-radius:9px;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:12;text-align:center}#toast.show{opacity:1;transform:translate(-50%,0)}#tooltip{position:absolute;display:none;pointer-events:none;background:#eee7d7f5;border:1px solid #fff7;color:#333c3e;padding:9px 13px;border-radius:6px;font-size:11px;box-shadow:0 4px 16px #0003;z-index:9}#loading{position:absolute;inset:0;background:#252a2c;display:grid;place-items:center;padding:24px;z-index:20;transition:opacity .6s}.loading-inner{text-align:center;max-width:100%}.loading-inner h2{font-weight:400;letter-spacing:6px;font-size:clamp(20px,4.9vw,26px)}.loading-inner p{font-size:11px;letter-spacing:2px;color:#c7c0ae;line-height:1.8}.loading-line{width:200px;max-width:75vw;height:1px;background:#ffffff20;margin:25px auto;overflow:hidden}.loading-line:after{content:"";display:block;width:90px;height:1px;background:#dac181;animation:load 1.2s infinite}@keyframes load{from{transform:translateX(-90px)}to{transform:translateX(200px)}}#error{display:none;position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(500px,calc(100% - 32px));max-height:calc(var(--app-height,100dvh) - 48px);overflow:auto;background:#282e30;padding:26px;border:1px solid #b89b67;border-radius:14px;z-index:30;line-height:1.8;box-shadow:0 18px 70px #0008;overflow-wrap:anywhere}#error h2{font-size:20px;font-weight:500;margin-top:0}#error p{font-size:13px;color:#d5d9d3}#error button{min-height:44px;padding:10px 15px;border:1px solid #c0a76885;border-radius:8px;margin:5px 8px 5px 0;background:#b79b4822;color:#ffe2aa;cursor:pointer}
+@media(max-width:1000px){header{left:24px;top:calc(24px + var(--safe-top))}h1{font-size:28px;letter-spacing:5px}.eyebrow{font-size:8px;letter-spacing:2px}.subtitle{font-size:10px;letter-spacing:1px}.topright{top:calc(24px + var(--safe-top));right:calc(188px + var(--safe-right))}.action-dock{top:calc(24px + var(--safe-top));right:calc(20px + var(--safe-right))}.side-note{left:24px}.toolbar{right:calc(20px + var(--safe-right))}.footer{left:24px;right:20px}.hints{gap:10px}.hints .small{display:none}.live{letter-spacing:.5px}}
+@media(max-width:900px),(pointer:coarse){
+ header{left:calc(18px + var(--safe-left));top:calc(18px + var(--safe-top))}.eyebrow{font-size:8px;letter-spacing:1.7px;gap:7px}.mark{width:12px;height:12px}.mark:after{inset:3px}h1{font-size:26px;letter-spacing:4px;margin:9px 0 0}.subtitle{display:none}.topright{top:calc(16px + var(--safe-top));right:calc(16px + var(--safe-right))}.clock{padding:9px 11px;gap:8px;min-height:55px}.sunicon{font-size:20px;min-width:19px}#time{font-size:16px}.phase{font-size:10px;letter-spacing:.3px}.side-note{display:none}
+ .action-dock{top:auto;bottom:calc(14px + var(--safe-bottom));left:50%;right:auto;transform:translateX(-50%);width:min(360px,calc(100% - 32px - var(--safe-left) - var(--safe-right)));display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:3px;padding:5px;border-radius:17px;box-shadow:0 6px 25px #0004}.dock-action{min-width:0;min-height:56px;border-radius:12px;gap:5px}.dock-action span{font-size:11px}.dock-action svg{width:21px;height:21px}#controlsButton{display:flex}
+ .toolbar{display:none;left:50%;right:auto;bottom:calc(96px + var(--safe-bottom));transform:translateX(-50%);width:min(400px,calc(100% - 24px - var(--safe-left) - var(--safe-right)));max-height:calc(var(--app-height,100dvh) - 192px - var(--safe-top) - var(--safe-bottom));padding:8px 16px 4px;border-radius:17px;box-shadow:0 10px 45px #0007}.controls-open .toolbar{display:block}.panel-heading{margin-bottom:2px}.toolbar-title{font-size:12px;letter-spacing:1px}.panel-close{display:flex;margin-right:-9px}.control-grid{grid-template-columns:repeat(2,minmax(0,1fr));column-gap:20px}.control{min-height:46px;font-size:12px;gap:5px}.control span:last-child{font-size:10px}.time-control{padding-top:12px}.time-control input{height:44px;margin-bottom:0}.help{margin-top:4px}.help summary{min-height:44px}.touch-only{display:initial}.desktop-only{display:none}
+ .footer{left:calc(12px + var(--safe-left));right:calc(12px + var(--safe-right));bottom:calc(90px + var(--safe-bottom));justify-content:center;border:0;padding:0;font-size:10px;color:#e2e3d8;letter-spacing:.3px;text-shadow:0 1px 6px #000d}.hints,.live{display:none}.touch-hint{display:block;padding:5px 10px;background:#232a2c88;border-radius:20px}.controls-open .footer{visibility:hidden}#toast{top:calc(92px + var(--safe-top));font-size:12px;padding:9px 14px}#tooltip{max-width:calc(100vw - 24px)}#exitImmersiveButton{top:calc(14px + var(--safe-top));right:calc(14px + var(--safe-right));border-radius:12px;min-height:46px}
+}
+@media(max-height:500px) and (orientation:landscape) and (max-width:900px),(max-height:500px) and (orientation:landscape) and (pointer:coarse){
+ header{top:calc(12px + var(--safe-top))}.eyebrow{display:none}h1{font-size:22px;margin-top:0}.topright{top:calc(10px + var(--safe-top));right:calc(12px + var(--safe-right))}.clock{padding:7px 10px;min-height:44px}.phase{font-size:9px}.action-dock{width:296px;bottom:calc(10px + var(--safe-bottom));padding:3px}.dock-action{min-height:48px;gap:3px}.dock-action svg{width:18px;height:18px}.dock-action span{font-size:10px}.toolbar{left:auto;right:calc(12px + var(--safe-right));transform:none;width:342px;bottom:calc(76px + var(--safe-bottom));max-height:calc(var(--app-height,100dvh) - 92px - var(--safe-top) - var(--safe-bottom));padding-top:4px}.footer{bottom:calc(69px + var(--safe-bottom));font-size:9px}.touch-hint{padding:3px 8px}#toast{top:calc(61px + var(--safe-top));padding:7px 12px}.loading-inner h2{font-size:21px}.loading-line{margin:18px auto}
+}
+@media(max-width:360px){header .eyebrow{display:none}header h1{font-size:24px;margin-top:10px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}}
 </style>
 </head>
 <body>
-<canvas id="scene" tabindex="0" aria-label="可拖拽旋转的三维体素建筑工地沙盘"></canvas><div class="vignette"></div>
-<header><div class="eyebrow"><i class="mark"></i> ATELIER / MINIATURE WORLDS</div><h1>筑造之间</h1><div class="subtitle">一方沙盘，一座正在生长的城市。</div></header>
-<div class="topright"><div class="clock glass"><span class="sunicon" id="weatherIcon">☀</span><div><div id="time">16:20</div><div class="phase" id="phase">午后 · 晴朗</div></div></div><button class="iconbtn" id="rainButton" title="切换暴雨 [空格]" aria-label="切换暴雨">☂</button><button class="iconbtn" id="homeButton" title="恢复观察视角 [R]" aria-label="恢复观察视角">⌂</button></div>
-<div class="side-note"><div class="number">NO. 001 / 建设进行时</div><p>从一铲泥土，到城市天际线。<br>停下来，看见每一份忙碌。</p><div class="legend"><span><i></i>土方作业</span><span><i class="blue"></i>结构施工</span><span><i class="green"></i>后勤调度</span></div></div>
-<div class="toolbar glass"><div class="toolbar-title">SANDBOX CONTROLS</div><button class="control" id="speedButton" title="亦可点击桌上 SPEED 实体旋钮"><span>设备运行</span><span id="speedValue">1.0 ×</span></button><button class="control" id="dayButton" title="亦可点击桌上 DAY / NIGHT 实体旋钮"><span>昼夜循环</span><span id="dayValue">开启 ↻</span></button><button class="control" id="dustButton" title="亦可点击桌上 DUST 实体旋钮"><span>施工扬尘</span><span id="dustValue">轻盈</span></button><button class="control" id="orbitButton"><span>闲置环绕</span><span id="orbitValue">开启 ↻</span></button></div>
-<footer class="footer"><div class="hints"><span><b class="key">拖拽</b>环视</span><span><b class="key">滚轮</b>缩放</span><span><b class="key">SPACE</b>暴雨</span><span><b class="key">H</b>沉浸</span><span class="small">桌前旋钮可直接点击</span></div><div class="live"><i class="dot"></i> LIVE DIORAMA <span id="fps">— FPS</span></div></footer>
-<div id="toast" role="status" aria-live="polite"></div><div id="tooltip"></div><div id="loading"><div class="loading-inner"><div class="eyebrow" style="justify-content:center">ATELIER / 001</div><h2>正在筑造微缩世界</h2><div class="loading-line"></div><p>铺设道路 · 吊装钢筋 · 点亮工地</p></div></div><div id="error"></div>
+<canvas id="scene" tabindex="0" aria-label="三维体素工地沙盘。单指拖动环视，双指缩放与平移，双击恢复视角；也可使用下方按钮。"></canvas>
+<div class="vignette" aria-hidden="true"></div>
+<header>
+ <div class="eyebrow"><i class="mark" aria-hidden="true"></i> ATELIER / MINIATURE WORLDS</div>
+ <h1>筑造之间</h1>
+ <div class="subtitle">一方沙盘，一座正在生长的城市。</div>
+</header>
+<div class="topright">
+ <div class="clock glass" aria-label="沙盘时间与天气"><span class="sunicon" id="weatherIcon" aria-hidden="true">☀</span><div><div id="time">16:20</div><div class="phase" id="phase">午后 · 晴朗</div></div></div>
+</div>
+<nav class="action-dock glass" aria-label="沙盘快捷操作">
+ <button type="button" class="dock-action" id="rainButton" title="切换暴雨 [空格]" aria-label="切换暴雨" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 15h-1a3.5 3.5 0 0 1-.8-6.9 5.5 5.5 0 0 1 10.5-1.7 4.3 4.3 0 1 1 3.3 8.6h-1M8 16l-1 3m5-2-1 3m5-4-1 3"/></svg><span>暴雨</span></button>
+ <button type="button" class="dock-action" id="homeButton" title="恢复观察视角 [R]" aria-label="恢复观察视角"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 4 1 5 5-1M6.2 8.4A8 8 0 1 1 4 14"/><path d="m9 12 3-2 3 2v4H9z"/></svg><span>复位</span></button>
+ <button type="button" class="dock-action" id="pauseButton" title="暂停或继续施工 [P]" aria-label="暂停施工" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14M16 5v14"/></svg><span id="pauseLabel">暂停</span></button>
+ <button type="button" class="dock-action" id="controlsButton" title="沙盘设置" aria-expanded="false" aria-controls="controlPanel"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h6m4 0h6M4 17h10m4 0h2M10 4v6m4 4v6"/></svg><span>设置</span></button>
+</nav>
+<div class="side-note">
+ <div class="number">NO. 001 / 建设进行时</div>
+ <p>从一铲泥土，到城市天际线。<br>停下来，看见每一份忙碌。</p>
+ <div class="legend"><span><i></i>土方作业</span><span><i class="blue"></i>结构施工</span><span><i class="green"></i>后勤调度</span></div>
+</div>
+<aside class="toolbar glass" id="controlPanel" aria-label="沙盘设置">
+ <div class="panel-heading"><h2 class="toolbar-title">沙盘设置 <span class="desktop-only">/ CONTROLS</span></h2><button type="button" class="panel-close" id="closeControlsButton" aria-label="收起设置"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button></div>
+ <div class="control-grid">
+  <button type="button" class="control" id="speedButton" title="亦可点击桌上 SPEED 实体旋钮"><span>设备运行</span><span id="speedValue">1.0 ×</span></button>
+  <button type="button" class="control" id="dayButton" title="亦可点击桌上 DAY / NIGHT 实体旋钮" aria-pressed="true"><span>昼夜循环</span><span id="dayValue">开启 ↻</span></button>
+  <button type="button" class="control" id="dustButton" title="亦可点击桌上 DUST 实体旋钮"><span>施工扬尘</span><span id="dustValue">轻盈</span></button>
+  <button type="button" class="control" id="orbitButton" aria-pressed="true"><span>闲置环绕</span><span id="orbitValue">开启 ↻</span></button>
+  <button type="button" class="control" id="qualityButton" title="切换自动、流畅或清晰画质"><span>画面质量</span><span id="qualityValue">自动</span></button>
+  <button type="button" class="control" id="fullscreenButton" title="进入或退出全屏" aria-pressed="false"><span>屏幕显示</span><span id="fullscreenValue">全屏 ↗</span></button>
+  <button type="button" class="control" id="viewButton" title="隐藏界面，保留返回按钮 [H]" aria-pressed="false"><span>沉浸观察</span><span>进入 ↗</span></button>
+ </div>
+ <div class="time-control">
+  <label for="timeSlider">选择时刻 <span id="timeSliderLabel">16:20</span></label>
+  <input type="range" id="timeSlider" min="0" max="24" step="0.1" value="16.3" aria-describedby="timeSliderHint">
+  <p id="timeSliderHint">滑动定格光影，开启昼夜循环即可继续。</p>
+ </div>
+ <details class="help" id="helpPanel"><summary>操作指南</summary><p><span class="touch-only">单指拖动环视；双指捏合缩放、同向拖动平移；双击画面复位。<br></span><span class="desktop-only">拖拽环视，滚轮缩放。<br><kbd>空格</kbd> 暴雨 · <kbd>R</kbd> 复位 · <kbd>P</kbd> 暂停 · <kbd>H</kbd> 沉浸。<br></span>桌前的实体旋钮也可以点按。<br>流畅画质会减少粒子与阴影开销。</p></details>
+</aside>
+<button type="button" class="glass" id="exitImmersiveButton" aria-label="退出沉浸观察"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4v5H4m11-5v5h5M4 15h5v5m11-5h-5v5"/></svg><span>显示界面</span></button>
+<footer class="footer">
+ <div class="hints"><span><b class="key">拖拽</b>环视</span><span><b class="key">滚轮</b>缩放</span><span><b class="key">SPACE</b>暴雨</span><span><b class="key">H</b>沉浸</span><span class="small">桌前旋钮可直接点击</span></div>
+ <span class="touch-only touch-hint">单指环视 · 双指缩放 / 平移 · 双击复位</span>
+ <div class="live"><i class="dot" aria-hidden="true"></i> LIVE DIORAMA <span id="fps">— FPS</span></div>
+</footer>
+<div id="toast" role="status" aria-live="polite" aria-atomic="true"></div>
+<div id="tooltip" role="tooltip"></div>
+<div id="loading" role="status" aria-label="正在加载微缩世界"><div class="loading-inner"><div class="eyebrow" style="justify-content:center">ATELIER / 001</div><h2>正在筑造微缩世界</h2><div class="loading-line" aria-hidden="true"></div><p>铺设道路 · 吊装钢筋 · 点亮工地</p></div></div>
+<div id="error" role="alert"></div>
+<script>
+// ES5 on purpose: report initialization errors even when a newer script cannot parse.
+(function(){
+ var started=false,timer;
+ function showError(message,force){
+  if(started&&!force)return;
+  var panel=document.getElementById('error'),loading=document.getElementById('loading');
+  if(!panel)return;loading.style.display='none';panel.style.display='block';panel.setAttribute('role','alert');panel.textContent='';
+  var title=document.createElement('h2');title.textContent='暂时无法进入沙盘';panel.appendChild(title);
+  var detail=document.createElement('p');detail.textContent=message||'请尝试流畅模式，或使用支持 WebGL 的浏览器重新打开。';panel.appendChild(detail);
+  var retry=document.createElement('button');retry.textContent='重新加载';retry.onclick=function(){location.reload();};panel.appendChild(retry);
+  var eco=document.createElement('button');eco.textContent='尝试流畅模式';eco.onclick=function(){var next=location.href.split('#')[0];next=next.replace(/([?&])quality=[^&]*/g,'$1').replace(/[?&]$/,'');location.href=next+(next.indexOf('?')<0?'?':'&')+'quality=eco';};panel.appendChild(eco);
+ }
+ window.__boot={ready:function(){started=true;clearTimeout(timer);},fail:showError};
+ window.addEventListener('error',function(e){if(!started)showError('浏览器未能启动三维画面。'+(e.message?'（'+e.message+'）':''));});
+ timer=setTimeout(function(){showError('启动耗时较长。可以选择流畅模式重试；若仍无法进入，请在 Chrome 或 Safari 中打开。');},30000);
+})();
+
+</script>
 <script>
 console.warn('Scripts "build/three.js" and "build/three.min.js" are deprecated with r150+, and will be removed with r160. Please use ES Modules or alternatives: https://threejs.org/docs/index.html#manual/en/introduction/Installation'),
 /**
@@ -35,16 +116,16 @@ const scene=new THREE.Scene(), world=new THREE.Group();scene.add(world);
 let seed=18467;function rand(){seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed/4294967296;}
 const mats=new Map(), batches=new Map(), cubeGeo=new THREE.BoxGeometry(1,1,1), scratch=new THREE.Object3D();
 const baseMaterial=new THREE.MeshStandardMaterial({color:0xffffff,roughness:.78,metalness:.04});
-function mat(color){if(color?.isMaterial)return color;if(!mats.has(color))mats.set(color,new THREE.MeshStandardMaterial({color,roughness:.73,metalness:.05}));return mats.get(color);}
+function mat(color){if(color&&color.isMaterial)return color;if(!mats.has(color))mats.set(color,new THREE.MeshStandardMaterial({color,roughness:.73,metalness:.05}));return mats.get(color);}
 function group(parent,x=0,y=0,z=0){const g=new THREE.Group();g.position.set(x,y,z);parent.add(g);return g;}
 function queueBox(parent,color,matrix){let p=batches.get(parent);if(!p){p=[];batches.set(parent,p);}p.push({color,matrix:matrix.clone()});}
 function box(parent,color,x,y,z,w,h,d,rx=0,ry=0,rz=0){scratch.position.set(x,y,z);scratch.rotation.set(rx,ry,rz);scratch.scale.set(w,h,d);scratch.updateMatrix();queueBox(parent,color,scratch.matrix);}
 function beam(parent,color,a,b,t){const va=new THREE.Vector3(...a),vb=new THREE.Vector3(...b),dif=vb.clone().sub(va);scratch.position.copy(va).add(vb).multiplyScalar(.5);scratch.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),dif.clone().normalize());scratch.scale.set(t,dif.length(),t);scratch.updateMatrix();queueBox(parent,color,scratch.matrix);}
 let instanceCount=0;
-function flushBatches(){for(const[parent,records]of batches){const partitions=new Map();for(const r of records){const key=r.color?.isMaterial?r.color:baseMaterial;if(!partitions.has(key))partitions.set(key,[]);partitions.get(key).push(r);}for(const[m,rs]of partitions){const mesh=new THREE.InstancedMesh(cubeGeo,m,rs.length);rs.forEach((r,i)=>{mesh.setMatrixAt(i,r.matrix);if(!r.color?.isMaterial)mesh.setColorAt(i,new THREE.Color(r.color));});mesh.castShadow=true;mesh.receiveShadow=true;mesh.instanceMatrix.needsUpdate=true;if(mesh.instanceColor)mesh.instanceColor.needsUpdate=true;mesh.computeBoundingSphere();parent.add(mesh);instanceCount+=rs.length;}}batches.clear();}
+function flushBatches(){for(const[parent,records]of batches){const partitions=new Map();for(const r of records){const key=r.color&&r.color.isMaterial?r.color:baseMaterial;if(!partitions.has(key))partitions.set(key,[]);partitions.get(key).push(r);}for(const[m,rs]of partitions){const mesh=new THREE.InstancedMesh(cubeGeo,m,rs.length);rs.forEach((r,i)=>{mesh.setMatrixAt(i,r.matrix);if(!(r.color&&r.color.isMaterial))mesh.setColorAt(i,new THREE.Color(r.color));});mesh.castShadow=true;mesh.receiveShadow=true;mesh.instanceMatrix.needsUpdate=true;if(mesh.instanceColor)mesh.instanceColor.needsUpdate=true;mesh.computeBoundingSphere();parent.add(mesh);instanceCount+=rs.length;}}batches.clear();}
 const cylGeos=new Map();function cyl(parent,color,x,y,z,rt,rb,h,n=8,rx=0,ry=0,rz=0){const key=[rt,rb,h,n].join(',');if(!cylGeos.has(key))cylGeos.set(key,new THREE.CylinderGeometry(rt,rb,h,n));const m=new THREE.Mesh(cylGeos.get(key),mat(color));m.position.set(x,y,z);m.rotation.set(rx,ry,rz);m.castShadow=true;m.receiveShadow=true;parent.add(m);return m;}
 function canvasTexture(w,h,draw){const c=document.createElement('canvas');c.width=w;c.height=h;draw(c.getContext('2d'),w,h);const tex=new THREE.CanvasTexture(c);tex.colorSpace=THREE.SRGBColorSpace;tex.anisotropy=4;return tex;}
-function label(parent,text,x,y,z,w,h,o={}){const tex=canvasTexture(512,Math.max(64,Math.round(512*h/w)),(c,cw,ch)=>{c.fillStyle=o.bg??'#23393d';c.fillRect(0,0,cw,ch);c.strokeStyle=o.fg??'#eadfbf';c.globalAlpha=.4;c.strokeRect(7,7,cw-14,ch-14);c.globalAlpha=1;c.fillStyle=o.fg??'#eadfbf';c.textAlign='center';c.textBaseline='middle';c.font=`600 ${o.fontSize??Math.min(ch*.5,cw/(text.length*.65))}px "Segoe UI","Microsoft YaHei",sans-serif`;c.fillText(text,cw/2,ch/2);});const m=new THREE.Mesh(new THREE.PlaneGeometry(w,h),new THREE.MeshStandardMaterial({map:tex,roughness:.85,side:THREE.DoubleSide}));m.position.set(x,y,z);m.rotation.y=o.rotationY||0;parent.add(m);return m;}
+function label(parent,text,x,y,z,w,h,o={}){const bg=o.bg==null?'#23393d':o.bg,fg=o.fg==null?'#eadfbf':o.fg,fontSize=o.fontSize==null?Math.min(Math.max(64,Math.round(512*h/w))*.5,512/(text.length*.65)):o.fontSize;const tex=canvasTexture(512,Math.max(64,Math.round(512*h/w)),(c,cw,ch)=>{c.fillStyle=bg;c.fillRect(0,0,cw,ch);c.strokeStyle=fg;c.globalAlpha=.4;c.strokeRect(7,7,cw-14,ch-14);c.globalAlpha=1;c.fillStyle=fg;c.textAlign='center';c.textBaseline='middle';c.font=`600 ${fontSize}px "Segoe UI","Microsoft YaHei",sans-serif`;c.fillText(text,cw/2,ch/2);});const m=new THREE.Mesh(new THREE.PlaneGeometry(w,h),new THREE.MeshStandardMaterial({map:tex,roughness:.85,side:THREE.DoubleSide}));m.position.set(x,y,z);m.rotation.y=o.rotationY||0;parent.add(m);return m;}
 const glows=[];function registerGlow(parent,x,y,z,color=0xffbb66,size=1){glows.push({parent,pos:new THREE.Vector3(x,y,z),color:new THREE.Color(color),size});}
 function buildTable(){
  const tex=canvasTexture(1024,512,(c,w,h)=>{c.fillStyle='#382922';c.fillRect(0,0,w,h);for(let i=0;i<1900;i++){const y=rand()*h;c.strokeStyle=`rgba(${rand()>.55?'149,108,74':'12,10,9'},${.04+rand()*.13})`;c.lineWidth=.3+rand()*2;c.beginPath();for(let x=0;x<=w;x+=16){const v=y+Math.sin(x*.009+y*.023)*3+Math.sin(x*.023+y)*.7;x?c.lineTo(x,v):c.moveTo(x,v);}c.stroke();}for(let y=0;y<h;y+=128){c.fillStyle='#110e0b';c.fillRect(0,y,w,1.5);c.fillStyle='#95735335';c.fillRect(0,y+2,w,1);}});tex.wrapS=tex.wrapT=THREE.RepeatWrapping;tex.repeat.set(2,2);
@@ -69,13 +150,13 @@ function buildTable(){
  // Retaining wall strata; shoring beams sit outside the free excavator envelope.
  for(let layer=0;layer<3;layer++){const y=.71+layer*.255,c=[0x80664b,0x9d7b53,0xae8b60][layer];for(let z=-4.15;z<3.5;z+=.55){box(world,c,-11.05,y,z,.18,.25,.55);box(world,c,-4,y,z,.18,.25,.55);}for(let x=-10.78;x<-4.1;x+=.55){box(world,c,x,y,-4.25,.54,.25,.15);box(world,c,x,y,3.42,.54,.25,.15);}}
  for(let z=-3.8;z<3.3;z+=1.15){box(world,0x635f54,-3.91,1,z,.13,1.05,.14);box(world,0x78776a,-11.15,1,z,.12,1.05,.14);}
- for(let i=0;i<380;i++){const x=-10.75+rand()*6.5,z=-3.95+rand()*6.95,s=.07+rand()*.14;if((x>-10.5&&x<-8.5&&z>-.9&&z<.9)||(x>-6.6&&x<-5&&z>-2.15&&z<-.85))continue;box(world,soil[i%5],x,.55+s/2,z,s,s,s);batches.get(world).at(-1).loose=true;}
+ for(let i=0;i<380;i++){const x=-10.75+rand()*6.5,z=-3.95+rand()*6.95,s=.07+rand()*.14;if((x>-10.5&&x<-8.5&&z>-.9&&z<.9)||(x>-6.6&&x<-5&&z>-2.15&&z<-.85))continue;box(world,soil[i%5],x,.55+s/2,z,s,s,s);const queued=batches.get(world);queued[queued.length-1].loose=true;}
  // Loop road with positive separation from structures and pedestrians.
  const road=new THREE.MeshStandardMaterial({color:0x6d7069,roughness:.95,metalness:.03});window.roadMat=road;
  box(world,road,0,1.414,-7.1,27.7,.028,2.6);box(world,road,0,1.414,7.1,27.7,.028,2.6);box(world,road,-12.5,1.414,0,2.6,.028,11.6);box(world,road,12.5,1.414,0,2.6,.028,11.6);
  for(let x=-10.3;x<11;x+=1.8){box(world,0xc6bc91,x,1.436,-7.1,.75,.012,.055);box(world,0xc6bc91,x,1.436,7.1,.75,.012,.055);}for(let z=-4.8;z<5.6;z+=1.7){box(world,0xc6bc91,-12.5,1.436,z,.055,.012,.7);box(world,0xc6bc91,12.5,1.436,z,.055,.012,.7);}
  // Fine gravel remains on safe shoulders, out of every traffic corridor.
- for(let i=0;i<650;i++){let x=-14.7+rand()*29.4,z=-9.7+rand()*19.4;if((Math.abs(x)>11.05&&Math.abs(x)<13.95)||(Math.abs(z)>5.8&&Math.abs(z)<8.43)||(x>-11.2&&x<-3.9&&z>-4.4&&z<3.6)||(x>-9&&x<-4.7&&z>4.15&&z<5.55))continue;const s=.035+rand()*.06;box(world,[0xa98e69,0xddd0ab,0x857b68][i%3],x,G+s/2,z,s,s*.6,s);batches.get(world).at(-1).loose=true;}
+ for(let i=0;i<650;i++){let x=-14.7+rand()*29.4,z=-9.7+rand()*19.4;if((Math.abs(x)>11.05&&Math.abs(x)<13.95)||(Math.abs(z)>5.8&&Math.abs(z)<8.43)||(x>-11.2&&x<-3.9&&z>-4.4&&z<3.6)||(x>-9&&x<-4.7&&z>4.15&&z<5.55))continue;const s=.035+rand()*.06;box(world,[0xa98e69,0xddd0ab,0x857b68][i%3],x,G+s/2,z,s,s*.6,s);const queued=batches.get(world);queued[queued.length-1].loose=true;}
  buildDeskProps();
 }
 function pruneLooseGravel(architecture,staff){const records=batches.get(world);batches.set(world,records.filter(r=>{if(!r.loose)return true;const e=r.matrix.elements,x=e[12],y=e[13],z=e[14],padding=Math.max(e[0],e[10])*.5+.04;for(const w of staff.workers){if(Math.abs(w.y-y)<.6&&Math.abs(x-w.baseX)<w.radius+w.travel+padding&&Math.abs(z-w.baseZ)<w.radius+padding)return false;}for(const o of architecture.obstacles){if(y>G&&Math.abs(x-o.x)<o.hx+padding&&Math.abs(z-o.z)<o.hz+padding)return false;}return true;}));}
@@ -1032,27 +1113,198 @@ function buildWorkers() {
 
 </script>
 <script>
+// Pointer Events unify mouse, pen and native multi-touch without page zoom side effects.
+const coarsePointer=!!(window.matchMedia&&matchMedia('(pointer:coarse)').matches);
+const reducedMotion=!!(window.matchMedia&&matchMedia('(prefers-reduced-motion:reduce)').matches);
+const touches=new Map();
+const navigation={
+ velocityAz:0,velocityPolar:0,gesture:null,lastTap:null,homeDistance:51,initialized:false,
+ get activePointers(){return touches.size;},get azimuth(){return azimuth;},get polar(){return polar;},
+ get radius(){return radius;},get targetRadius(){return targetRadius;},get targetAz(){return targetAz;},
+ get focus(){return focus.toArray();},get targetFocus(){return targetFocus.toArray();}
+};
+let viewWidth=1,viewHeight=1,settingsOpen=false,previousSpeedIndex=2,qualityMode='auto',slowWindows=0,fastWindows=0,qualityChangedAt=0,restoringContext=false;
+const qualityLabels={auto:'自动',eco:'流畅',high:'清晰'};
+const panRight=new THREE.Vector3(),panUp=new THREE.Vector3();
+function markInteraction(){lastInput=performance.now();navigation.velocityAz=0;navigation.velocityPolar=0;}
+function savePreferences(){try{localStorage.setItem('north-yard-settings-v2',JSON.stringify({quality:qualityMode,orbit:state.orbit,dust:state.dust,dayCycle:state.dayCycle,hour:state.hour,speedIndex:state.speedIndex,previousSpeedIndex}));}catch(_){} }
+function loadPreferences(){
+ state.orbit=!reducedMotion;
+ try{const saved=JSON.parse(localStorage.getItem('north-yard-settings-v2')||'null');if(saved){
+  if(['auto','eco','high'].includes(saved.quality))qualityMode=saved.quality;
+  if(typeof saved.orbit==='boolean')state.orbit=saved.orbit&&!reducedMotion;
+  if(Number.isInteger(saved.dust)&&saved.dust>=0&&saved.dust<=2)state.dust=saved.dust;
+  if(typeof saved.dayCycle==='boolean')state.dayCycle=saved.dayCycle;
+  if(Number.isFinite(saved.hour))state.hour=THREE.MathUtils.clamp(saved.hour,0,23.99);
+  if(Number.isInteger(saved.speedIndex)&&saved.speedIndex>=0&&saved.speedIndex<speedSteps.length){state.speedIndex=saved.speedIndex;state.speed=speedSteps[saved.speedIndex];}
+  if(Number.isInteger(saved.previousSpeedIndex)&&saved.previousSpeedIndex>0&&saved.previousSpeedIndex<speedSteps.length)previousSpeedIndex=saved.previousSpeedIndex;
+ }}catch(_){}
+ const requested=new URLSearchParams(location.search).get('quality');if(['auto','eco','high'].includes(requested))qualityMode=requested;
+}
+function layoutIsCompact(){return viewWidth<=900||coarsePointer;}
+function fitDistance(){
+ // Fit the complete model, including jibs and desk controls, to BOTH fields of view.
+ const vfov=THREE.MathUtils.degToRad(camera.fov)*.5,hTan=Math.tan(vfov)*camera.aspect,vTan=Math.tan(vfov);
+ const outward=new THREE.Vector3(Math.sin(.63)*Math.sin(1.12),Math.cos(1.12),Math.cos(.63)*Math.sin(1.12));
+ const right=new THREE.Vector3(Math.cos(.63),0,-Math.sin(.63)),up=new THREE.Vector3().crossVectors(outward,right);
+ const p=new THREE.Vector3();let fit=51;
+ for(const x of[-15.6,15.6])for(const z of[-10.8,14.6])for(const y of[.1,14.7]){
+  p.set(x,y-4.6,z);const toward=p.dot(outward);
+  fit=Math.max(fit,toward+Math.abs(p.dot(right))/hTan*1.08,toward+Math.abs(p.dot(up))/vTan*1.22);
+ }
+ return fit;
+}
+function resizeViewport(initial=false){
+ const oldAspect=camera.aspect,oldHome=navigation.homeDistance;
+ viewWidth=Math.max(1,document.documentElement.clientWidth||innerWidth);
+ const vv=window.visualViewport;
+ viewHeight=Math.max(1,Math.round(vv&&Math.abs(vv.scale-1)<.01?vv.height:innerHeight));
+ document.documentElement.style.setProperty('--app-height',viewHeight+'px');
+ camera.aspect=viewWidth/viewHeight;camera.updateProjectionMatrix();renderer.setSize(viewWidth,viewHeight);
+ navigation.homeDistance=fitDistance();
+ if(initial||!navigation.initialized){targetRadius=radius=navigation.homeDistance;focus.set(0,4.6,0);targetFocus.copy(focus);navigation.initialized=true;}
+ else if(Math.abs(oldAspect-camera.aspect)>.12){
+  const zoom=THREE.MathUtils.clamp(targetRadius/oldHome,.3,1.7);targetRadius=THREE.MathUtils.clamp(navigation.homeDistance*zoom,28,navigation.homeDistance*1.7);radius=targetRadius;cancelPointers();
+ }
+ targetRadius=THREE.MathUtils.clamp(targetRadius,28,navigation.homeDistance*1.7);
+ updatePanelState();
+}
+function updateCamera(dt){
+ const f=1-Math.exp(-dt*12);
+ if(!touches.size&&!reducedMotion){targetAz+=navigation.velocityAz*dt;targetPolar=THREE.MathUtils.clamp(targetPolar+navigation.velocityPolar*dt,.53,1.38);const decay=Math.exp(-dt*7);navigation.velocityAz*=decay;navigation.velocityPolar*=decay;}
+ azimuth+=(targetAz-azimuth)*f;polar+=(targetPolar-polar)*f;radius+=(targetRadius-radius)*f;focus.lerp(targetFocus,f);
+ camera.position.set(focus.x+Math.sin(azimuth)*Math.sin(polar)*radius,focus.y+Math.cos(polar)*radius,focus.z+Math.cos(azimuth)*Math.sin(polar)*radius);camera.lookAt(focus);camera.updateMatrixWorld();
+}
+function resetCamera(silent=false){markInteraction();targetAz=.63;targetPolar=1.12;targetRadius=navigation.homeDistance;targetFocus.set(0,4.6,0);navigation.lastTap=null;if(!silent)notify('已恢复沙盘全景');}
+function pick(x,y){const rect=$('scene').getBoundingClientRect();pointer.set((x-rect.left)/rect.width*2-1,1-(y-rect.top)/rect.height*2);raycaster.setFromCamera(pointer,camera);return raycaster.intersectObjects(pickTargets,false)[0];}
+function gestureSample(){const ps=Array.from(touches.values());if(ps.length<2)return null;const a=ps[0],b=ps[1];return{x:(a.x+b.x)*.5,y:(a.y+b.y)*.5,distance:Math.max(2,Math.hypot(a.x-b.x,a.y-b.y))};}
+function panBy(dx,dy){
+ const scale=2*targetRadius*Math.tan(THREE.MathUtils.degToRad(camera.fov*.5))/viewHeight;
+ panRight.setFromMatrixColumn(camera.matrixWorld,0);panUp.setFromMatrixColumn(camera.matrixWorld,1);
+ targetFocus.addScaledVector(panRight,-dx*scale).addScaledVector(panUp,dy*scale);
+ targetFocus.x=THREE.MathUtils.clamp(targetFocus.x,-5,5);targetFocus.y=THREE.MathUtils.clamp(targetFocus.y,2.5,7.5);targetFocus.z=THREE.MathUtils.clamp(targetFocus.z,-4,4);
+}
+function zoomBy(factor){targetRadius=THREE.MathUtils.clamp(targetRadius*factor,28,navigation.homeDistance*1.7);}
+function cancelPointers(){touches.clear();navigation.gesture=null;navigation.lastTap=null;navigation.velocityAz=0;navigation.velocityPolar=0;$('scene').style.cursor='grab';}
+function cycleSpeed(){markInteraction();state.speedIndex=(state.speedIndex+1)%speedSteps.length;state.speed=speedSteps[state.speedIndex];if(state.speedIndex)previousSpeedIndex=state.speedIndex;notify(state.speed?'设备运行速度 · '+state.speed+' ×':'设备已暂停，天气与观察仍可继续');updateUI();savePreferences();}
+function togglePause(){markInteraction();if(state.speed){previousSpeedIndex=state.speedIndex;state.speedIndex=0;}else state.speedIndex=previousSpeedIndex||2;state.speed=speedSteps[state.speedIndex];notify(state.speed?'设备继续运行 · '+state.speed+' ×':'设备已暂停');updateUI();savePreferences();}
+function toggleDay(){markInteraction();state.dayCycle=!state.dayCycle;notify(state.dayCycle?'昼夜循环开启 · 每 4 分钟一个昼夜':'时间定格 · '+formatTime());updateUI();savePreferences();}
+function cycleDust(){markInteraction();state.dust=(state.dust+1)%3;notify('施工扬尘 · '+dustNames[state.dust]);updateUI();savePreferences();}
+function toggleRain(){markInteraction();state.rain=!state.rain;notify(state.rain?'暴雨降临 · 工地照明增强':'雨势渐歇 · 地面缓慢干燥');updateUI();}
+function formatTime(){const h=Math.floor(state.hour)%24,m=Math.floor((state.hour-Math.floor(state.hour))*60);return String(h).padStart(2,'0')+':'+String(m).padStart(2,'0');}
+function setText(id,value){const el=$(id);if(el&&el.textContent!==value)el.textContent=value;}
+function updateClockUI(){
+ setText('time',formatTime());const h=state.hour,phase=h<5||h>=20?'夜晚':h<8?'黎明':h<16.5?'白昼':'黄昏';
+ setText('phase',phase+' · '+(state.rain?'暴雨':state.wet>.1?'雨后':'晴朗'));setText('weatherIcon',state.rain?'☂':state.night>.7?'☾':'☀');
+ setText('timeSliderLabel',formatTime());if($('timeSlider')&&document.activeElement!==$('timeSlider'))$('timeSlider').value=state.hour;
+}
+function updateUI(){
+ updateClockUI();setText('speedValue',state.speed===0?'已暂停':state.speed.toFixed(1)+' ×');setText('dayValue',state.dayCycle?'自动循环':'时间定格');setText('dustValue',dustNames[state.dust]);setText('orbitValue',state.orbit?'开启':'关闭');setText('pauseLabel',state.speed?'暂停':'继续');setText('qualityValue',qualityLabels[qualityMode]);
+ $('rainButton').classList.toggle('active',state.rain);$('rainButton').setAttribute('aria-pressed',String(state.rain));$('dayButton').setAttribute('aria-pressed',String(state.dayCycle));$('orbitButton').setAttribute('aria-pressed',String(state.orbit));
+ if($('pauseButton')){$('pauseButton').setAttribute('aria-pressed',String(!state.speed));$('pauseButton').setAttribute('aria-label',state.speed?'暂停设备':'继续设备');$('pauseButton').classList.toggle('active',!state.speed);$('pauseButton').querySelector('svg').innerHTML=state.speed?'<path d="M8 5v14M16 5v14"/>':'<path d="m8 5 11 7-11 7Z"/>';}
+ if(knobs.length){knobs[0].angle=-1.8+state.speedIndex*.9;knobs[1].angle=state.dayCycle?.65:-.65;knobs[2].angle=-1.3+state.dust*1.3;}
+}
+function updatePanelState(){
+ const compact=layoutIsCompact();document.body.classList.toggle('compact-ui',compact);document.body.classList.toggle('controls-open',settingsOpen&&compact);
+ $('controlsButton').setAttribute('aria-expanded',String(settingsOpen&&compact));$('controlPanel').setAttribute('aria-hidden',String(compact&&!settingsOpen));
+ const hidden=compact&&!settingsOpen;$('controlPanel').inert=hidden||document.body.classList.contains('clean');
+}
+function setControls(open,restoreFocus=false){markInteraction();settingsOpen=open;updatePanelState();if(open)$('closeControlsButton').focus({preventScroll:true});else if(restoreFocus)$('controlsButton').focus({preventScroll:true});}
+function toggleImmersive(){markInteraction();const clean=document.body.classList.toggle('clean');settingsOpen=false;updatePanelState();$('viewButton').setAttribute('aria-pressed',String(clean));$('exitImmersiveButton').setAttribute('aria-hidden',String(!clean));if(clean)$('exitImmersiveButton').focus({preventScroll:true});else $(layoutIsCompact()?'controlsButton':'viewButton').focus({preventScroll:true});notify(clean?'沉浸观察 · 右上角可退出':'操作界面已恢复');}
+function refreshFullscreenUI(){const supported=!!document.documentElement.requestFullscreen,active=!!document.fullscreenElement;$('fullscreenButton').disabled=!supported;$('fullscreenButton').setAttribute('aria-pressed',String(active));setText('fullscreenValue',supported?(active?'退出全屏':'进入全屏'):'可使用沉浸模式');$('fullscreenButton').setAttribute('aria-label',supported?(active?'退出全屏':'进入全屏'):'此浏览器不支持全屏，可使用沉浸模式');}
+function toggleFullscreen(){markInteraction();try{const result=document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen();if(result&&result.catch)result.catch(()=>notify('当前浏览器暂时无法全屏，可使用沉浸模式'));}catch(_){notify('当前浏览器暂时无法全屏，可使用沉浸模式');}}
+function qualityBudget(){const eco=qualityMode==='eco'||(qualityMode==='auto'&&lowPower);return {dpr:Math.min(devicePixelRatio,qualityMode==='eco'?.8:eco?1:1.5),dust:eco?350:950,rain:eco?1400:3800,shadows:!eco};}
+function applyQuality(){
+ const q=qualityBudget(),shadowsChanged=renderer.shadowMap.enabled!==q.shadows;renderer.setPixelRatio(q.dpr);renderer.shadowMap.enabled=q.shadows;renderer.shadowMap.needsUpdate=q.shadows;
+ if(shadowsChanged)scene.traverse(object=>{if(object.material){const materials=Array.isArray(object.material)?object.material:[object.material];for(const m of materials)m.needsUpdate=true;}});
+ if(dustPoints)dustPoints.geometry.setDrawRange(0,q.dust);if(rainLines)rainLines.geometry.setDrawRange(0,q.rain*2);
+ metric.quality=qualityMode;slowWindows=0;fastWindows=0;qualityChangedAt=performance.now();updateUI();
+}
+function cycleQuality(){markInteraction();qualityMode=['auto','eco','high'][(['auto','eco','high'].indexOf(qualityMode)+1)%3];applyQuality();notify('画面质量 · '+qualityLabels[qualityMode]);savePreferences();}
+function adjustQuality(fps,now){
+ if(qualityMode!=='auto'||now-qualityChangedAt<7000)return;
+ slowWindows=fps<50?slowWindows+1:0;fastWindows=fps>=57?fastWindows+1:0;
+ const ceiling=qualityBudget().dpr,current=renderer.getPixelRatio();
+ if(slowWindows>=3&&current>.7){renderer.setPixelRatio(Math.max(.7,Math.round((current-.15)*100)/100));slowWindows=0;qualityChangedAt=now;}
+ else if(fastWindows>=15&&current<ceiling){renderer.setPixelRatio(Math.min(ceiling,current+.1));fastWindows=0;qualityChangedAt=now;}
+}
+function bindInput(){
+ const canvas=$('scene');
+ canvas.addEventListener('pointerdown',e=>{
+  if(e.pointerType==='mouse'&&e.button!==0)return;
+  e.preventDefault();markInteraction();$('tooltip').style.display='none';
+  const hit=pick(e.clientX,e.clientY);touches.set(e.pointerId,{x:e.clientX,y:e.clientY,startX:e.clientX,startY:e.clientY,time:performance.now(),startTime:performance.now(),type:e.pointerType,moved:false,canTap:true,knob:hit?hit.object.userData.knob:-1});
+  try{canvas.setPointerCapture(e.pointerId);}catch(_){}
+  if(touches.size>1){touches.forEach(p=>{p.canTap=false;p.moved=true;});navigation.lastTap=null;navigation.gesture=gestureSample();}
+  canvas.style.cursor='grabbing';
+ },{passive:false});
+ canvas.addEventListener('pointermove',e=>{
+  const p=touches.get(e.pointerId),now=performance.now();
+  if(p){e.preventDefault();lastInput=now;const dx=e.clientX-p.x,dy=e.clientY-p.y,seconds=Math.max(.008,(now-p.time)/1000);p.x=e.clientX;p.y=e.clientY;p.time=now;
+   if(Math.hypot(p.x-p.startX,p.y-p.startY)>7)p.moved=true;
+   if(touches.size>=2){const next=gestureSample(),old=navigation.gesture;if(old){zoomBy(old.distance/next.distance);panBy(next.x-old.x,next.y-old.y);}navigation.gesture=next;navigation.velocityAz=0;navigation.velocityPolar=0;}
+   else if(p.moved){const rotation=2*Math.PI/Math.max(viewWidth,600),tilt=Math.PI/Math.max(viewHeight,600);targetAz-=dx*rotation;targetPolar=THREE.MathUtils.clamp(targetPolar+dy*tilt,.53,1.38);navigation.velocityAz=THREE.MathUtils.clamp(-dx*rotation/seconds,-1.2,1.2);navigation.velocityPolar=THREE.MathUtils.clamp(dy*tilt/seconds,-.5,.5);}
+  }else if(e.pointerType==='mouse'&&now-lastHover>80){lastHover=now;const hit=pick(e.clientX,e.clientY);canvas.style.cursor=hit?'pointer':'grab';$('tooltip').style.display=hit?'block':'none';if(hit){$('tooltip').textContent=['点击调节 · 设备运行速度','点击切换 · 昼夜循环','点击切换 · 扬尘强度'][hit.object.userData.knob];$('tooltip').style.left=Math.max(8,Math.min(e.clientX+14,viewWidth-208))+'px';$('tooltip').style.top=Math.max(8,e.clientY-42)+'px';}}
+ },{passive:false});
+ function release(e,cancelled){const p=touches.get(e.pointerId);if(!p)return;touches.delete(e.pointerId);const now=performance.now();lastInput=now;
+  if(cancelled){navigation.lastTap=null;navigation.velocityAz=0;navigation.velocityPolar=0;}
+  if(!cancelled&&p.canTap&&!p.moved&&now-p.startTime<450){const hit=pick(e.clientX,e.clientY);if(hit&&hit.object.userData.knob===p.knob){[cycleSpeed,toggleDay,cycleDust][p.knob]();navigation.lastTap=null;}
+   else if(p.knob<0&&p.type!=='mouse'){const last=navigation.lastTap;if(last&&now-last.time<320&&Math.hypot(e.clientX-last.x,e.clientY-last.y)<30)resetCamera();else navigation.lastTap={time:now,x:e.clientX,y:e.clientY};}
+  }
+  if(now-p.time>90){navigation.velocityAz=0;navigation.velocityPolar=0;}
+  if(touches.size){touches.forEach(q=>{q.canTap=false;q.moved=true;q.startX=q.x;q.startY=q.y;q.time=now;});navigation.velocityAz=0;navigation.velocityPolar=0;}
+  navigation.gesture=gestureSample();if(!touches.size)canvas.style.cursor='grab';
+ }
+ canvas.addEventListener('pointerup',e=>release(e,false));canvas.addEventListener('pointercancel',e=>release(e,true));canvas.addEventListener('lostpointercapture',e=>release(e,true));canvas.addEventListener('pointerleave',()=>{$('tooltip').style.display='none';});
+ canvas.addEventListener('dblclick',e=>{e.preventDefault();resetCamera();});canvas.addEventListener('contextmenu',e=>e.preventDefault());
+ canvas.addEventListener('wheel',e=>{e.preventDefault();markInteraction();const pixels=e.deltaY*(e.deltaMode===1?16:e.deltaMode===2?viewHeight:1);zoomBy(Math.exp(THREE.MathUtils.clamp(pixels,-600,600)*.001));},{passive:false});
+ window.addEventListener('blur',cancelPointers);window.addEventListener('pagehide',cancelPointers);
+ document.addEventListener('pointerdown',e=>{if(e.target!==canvas)markInteraction();},{passive:true});
+ window.addEventListener('keydown',e=>{
+  if(e.repeat)return;if(e.code==='Escape'){if(document.body.classList.contains('clean'))toggleImmersive();else if(settingsOpen)setControls(false,true);return;}
+  if(e.target.closest('input,textarea,select,[contenteditable="true"]'))return;
+  if((e.code==='Space'||e.code.startsWith('Arrow'))&&e.target.closest('button,summary,a'))return;
+  if(e.code==='Space'){e.preventDefault();toggleRain();}if(e.code==='KeyR')resetCamera();if(e.code==='KeyH')toggleImmersive();if(e.code==='KeyP')togglePause();
+  if(e.code==='Equal'||e.code==='NumpadAdd'){markInteraction();zoomBy(.85);}if(e.code==='Minus'||e.code==='NumpadSubtract'){markInteraction();zoomBy(1.15);}
+  if(e.code.startsWith('Arrow')){e.preventDefault();markInteraction();if(e.code==='ArrowLeft')targetAz-=.12;if(e.code==='ArrowRight')targetAz+=.12;if(e.code==='ArrowUp')targetPolar=Math.max(.53,targetPolar-.08);if(e.code==='ArrowDown')targetPolar=Math.min(1.38,targetPolar+.08);}
+ });
+ $('speedButton').onclick=cycleSpeed;$('pauseButton').onclick=togglePause;$('dayButton').onclick=toggleDay;$('dustButton').onclick=cycleDust;$('rainButton').onclick=toggleRain;$('homeButton').onclick=()=>resetCamera();
+ $('orbitButton').onclick=()=>{markInteraction();state.orbit=!state.orbit;updateUI();savePreferences();};$('controlsButton').onclick=()=>setControls(!settingsOpen);$('closeControlsButton').onclick=()=>setControls(false,true);
+ $('viewButton').onclick=toggleImmersive;$('exitImmersiveButton').onclick=toggleImmersive;$('qualityButton').onclick=cycleQuality;$('fullscreenButton').onclick=toggleFullscreen;refreshFullscreenUI();
+ $('timeSlider').oninput=()=>{markInteraction();state.hour=Math.min(23.99,Math.max(0,Number($('timeSlider').value)));state.dayCycle=false;updateEnvironment(0);updateUI();};$('timeSlider').onchange=savePreferences;
+ window.addEventListener('resize',()=>resizeViewport());if(window.visualViewport)visualViewport.addEventListener('resize',()=>resizeViewport());document.addEventListener('fullscreenchange',()=>{resizeViewport();refreshFullscreenUI();});
+ document.addEventListener('visibilitychange',()=>{cancelPointers();resetFrameClock();});window.addEventListener('pageshow',resetFrameClock);
+ canvas.addEventListener('webglcontextlost',e=>{e.preventDefault();restoringContext=true;cancelPointers();notify('画面暂时中断，正在恢复');});
+ canvas.addEventListener('webglcontextrestored',()=>{try{refreshEnvironmentMap();applyQuality();renderer.shadowMap.needsUpdate=true;restoringContext=false;resetFrameClock();notify('画面已恢复');}catch(e){fail(e);}});
+ resizeViewport(true);updatePanelState();
+}
+
+</script>
+<script>
 const state={speed:1,speedIndex:2,dayCycle:true,hour:16.33,dust:1,rain:false,orbit:true,simTime:0,realTime:0,wet:0,night:0};
 const speedSteps=[0,.5,1,2,4],dustNames=['关闭','轻盈','浓郁'];
-let renderer,camera,machines,staff,architecture,dayLight,hemi,fillLight,glowPoints,dustPoints,rainLines,puddle,envMap;
+let renderer,camera,machines,staff,architecture,dayLight,hemi,fillLight,glowPoints,dustPoints,rainLines,puddle,envMap,envSource,envTarget,lowPower=false;
 const lamps=[],knobs=[],pickTargets=[],rainUniforms={time:{value:0},strength:{value:0}},glowUniforms={strength:{value:0},pixelRatio:{value:1}};
-let azimuth=.63,polar=1.12,radius=51,targetAz=.63,targetPolar=1.12,targetRadius=51,lastInput=0,down=null,lastHover=0,toastTimer=0;
-const focus=new THREE.Vector3(0,3.5,0),raycaster=new THREE.Raycaster(),pointer=new THREE.Vector2();
-const tempV=new THREE.Vector3(),glowPositions=[],metric={fps:60,draws:0,triangles:0,frameTimes:[],quality:1};
+let azimuth=.63,polar=1.12,radius=51,targetAz=.63,targetPolar=1.12,targetRadius=51,lastInput=0,lastHover=0,toastTimer=0;
+const focus=new THREE.Vector3(0,4.6,0),targetFocus=focus.clone(),raycaster=new THREE.Raycaster(),pointer=new THREE.Vector2();
+const tempV=new THREE.Vector3(),metric={fps:60,draws:0,triangles:0,frameTimes:[],cpuFrameMs:0,quality:'auto',version:'2.0.0'};
+const palette={sunset:new THREE.Color(0xffb269),night:new THREE.Color(0x172331),day:new THREE.Color(0x475151),dusk:new THREE.Color(0x5a4b45),rain:new THREE.Color(0x26383e),windowDay:new THREE.Color(0x8d9da2),windowDusk:new THREE.Color(0xa58a7c),windowRain:new THREE.Color(0x3f5360),wetRoad:new THREE.Color(0x384b4c),background:new THREE.Color()};
 function notify(text){$('toast').textContent=text;$('toast').classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('toast').classList.remove('show'),2600);}
-function fail(e){console.error(e);$('loading').style.display='none';$('error').style.display='block';$('error').textContent='场景未能启动。请使用支持 WebGL 的 Chrome，并开启浏览器图形加速。\n'+e.message;}
+function fail(e){console.error(e);if(window.__boot)window.__boot.fail('未能启动三维画面。可选择流畅模式重试。'+(e.message?'（'+e.message+'）':''),true);}
+function refreshEnvironmentMap(){const pm=new THREE.PMREMGenerator(renderer),old=envTarget;envTarget=pm.fromEquirectangular(envSource);envMap=envTarget.texture;scene.environment=envMap;pm.dispose();if(old)old.dispose();}
 function initialize(){
  if(THREE.REVISION!=='160')throw new Error('Three.js version mismatch');
- renderer=new THREE.WebGLRenderer({canvas:$('scene'),antialias:true,powerPreference:'high-performance'});renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));renderer.setSize(innerWidth,innerHeight);renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.1;renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.shadowMap.autoUpdate=false;
+ lowPower=!!(coarsePointer||(navigator.hardwareConcurrency&&navigator.hardwareConcurrency<=4)||(navigator.deviceMemory&&navigator.deviceMemory<=4));loadPreferences();
+ renderer=new THREE.WebGLRenderer({canvas:$('scene'),antialias:!lowPower,powerPreference:'high-performance'});renderer.setPixelRatio(qualityBudget().dpr);renderer.setSize(innerWidth,innerHeight);renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.1;renderer.shadowMap.enabled=qualityBudget().shadows;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.shadowMap.autoUpdate=false;
  camera=new THREE.PerspectiveCamera(43,innerWidth/innerHeight,.3,210);scene.background=new THREE.Color(0x39464a);scene.fog=new THREE.FogExp2(0x39464a,.008);
- const et=canvasTexture(256,128,(c,w,h)=>{const g=c.createLinearGradient(0,0,0,h);g.addColorStop(0,'#bac4c6');g.addColorStop(.45,'#b6bbb3');g.addColorStop(.52,'#71776e');g.addColorStop(1,'#292826');c.fillStyle=g;c.fillRect(0,0,w,h);c.fillStyle='#f9ebcf';c.fillRect(25,22,36,40);c.fillStyle='#b3c3cb';c.fillRect(155,15,65,32);});et.mapping=THREE.EquirectangularReflectionMapping;const pm=new THREE.PMREMGenerator(renderer);envMap=pm.fromEquirectangular(et).texture;scene.environment=envMap;et.dispose();pm.dispose();
+ envSource=canvasTexture(256,128,(c,w,h)=>{const g=c.createLinearGradient(0,0,0,h);g.addColorStop(0,'#bac4c6');g.addColorStop(.45,'#b6bbb3');g.addColorStop(.52,'#71776e');g.addColorStop(1,'#292826');c.fillStyle=g;c.fillRect(0,0,w,h);c.fillStyle='#f9ebcf';c.fillRect(25,22,36,40);c.fillStyle='#b3c3cb';c.fillRect(155,15,65,32);});envSource.mapping=THREE.EquirectangularReflectionMapping;refreshEnvironmentMap();
  hemi=new THREE.HemisphereLight(0xd9e9f0,0x8e7352,2.25);scene.add(hemi);dayLight=new THREE.DirectionalLight(0xffd59b,3.6);dayLight.position.set(-20,36,17);dayLight.castShadow=true;dayLight.shadow.mapSize.set(2048,2048);Object.assign(dayLight.shadow.camera,{left:-26,right:26,top:23,bottom:-22,near:1,far:100});dayLight.shadow.bias=-.00025;dayLight.shadow.normalBias=.025;dayLight.target.position.set(0,2,0);scene.add(dayLight,dayLight.target);fillLight=new THREE.DirectionalLight(0x9fc7e3,.85);fillLight.position.set(20,18,-18);scene.add(fillLight);
  buildTable();architecture=buildArchitecture();machines=buildMachinery();staff=buildWorkers();pruneLooseGravel(architecture,staff);buildPhysicalControls();buildIllumination();buildParticles();buildPuddles();flushBatches();
  // Shared static cuboids are a single color-instanced draw; only articulated parts move separately.
- scene.updateMatrixWorld(true);createGlowBatch();updateCamera(1);bindInput();updateUI();updateEnvironment(0);renderer.shadowMap.needsUpdate=true;renderer.compile(scene,camera);renderer.render(scene,camera);
+ scene.updateMatrixWorld(true);scene.matrixWorldAutoUpdate=false;createGlowBatch();bindInput();applyQuality();updateCamera(1);updateEnvironment(0);renderer.shadowMap.needsUpdate=true;renderer.compile(scene,camera);renderer.render(scene,camera);
  $('loading').style.opacity=0;setTimeout(()=>$('loading').style.display='none',650);
- window.__sandbox={state,scene,camera,renderer,machines,staff,architecture,metric,knobs,actions:{speed:cycleSpeed,day:toggleDay,dust:cycleDust,rain:toggleRain,reset:resetCamera},setHour(h){state.hour=h;updateEnvironment(0);updateUI();},step(dt){state.simTime+=dt;machines.update(dt,state.simTime);staff.update(dt,state.simTime);scene.updateMatrixWorld(true);},getStats(){return {revision:THREE.REVISION,instances:instanceCount,workers:staff.count,drawCalls:renderer.info.render.calls,triangles:renderer.info.render.triangles,fps:metric.fps,dpr:renderer.getPixelRatio(),geometries:renderer.info.memory.geometries,textures:renderer.info.memory.textures,vehicleAudit:machines.audit?.(),workerAudit:staff.audit?.()};},projectKnob(i){const v=knobs[i].group.getWorldPosition(new THREE.Vector3());v.y+=.5;v.project(camera);return {x:(v.x*.5+.5)*innerWidth,y:(-.5*v.y+.5)*innerHeight};}};
- requestAnimationFrame(frame);
+ window.__sandbox={state,scene,camera,renderer,machines,staff,architecture,metric,knobs,lowPower,navigation,actions:{speed:cycleSpeed,pause:togglePause,quality:cycleQuality,day:toggleDay,dust:cycleDust,rain:toggleRain,reset:resetCamera},setHour(h){state.hour=THREE.MathUtils.clamp(h,0,23.99);updateEnvironment(0);updateUI();},step(dt){state.simTime+=dt;machines.update(dt,state.simTime);staff.update(dt,state.simTime);scene.updateMatrixWorld(true);},getStats(){return {version:metric.version,revision:THREE.REVISION,instances:instanceCount,workers:staff.count,drawCalls:renderer.info.render.calls,triangles:renderer.info.render.triangles,fps:metric.fps,cpuFrameMs:metric.cpuFrameMs,dpr:renderer.getPixelRatio(),geometries:renderer.info.memory.geometries,textures:renderer.info.memory.textures,vehicleAudit:machines.audit?machines.audit():null,workerAudit:staff.audit?staff.audit():null,lowPower,quality:qualityMode,shadows:renderer.shadowMap.enabled,activePointers:touches.size};},projectKnob(i){const v=knobs[i].group.getWorldPosition(new THREE.Vector3());v.y+=.5;v.project(camera);return {x:(v.x*.5+.5)*viewWidth,y:(-.5*v.y+.5)*viewHeight};}};
+ window.__boot.ready();$('error').style.display='none';resetFrameClock();requestAnimationFrame(frame);
 }
 function buildPhysicalControls(){
  const panel=group(scene,0,.12,12.95);box(panel,0x253238,0,.11,0,10.1,.22,2.95);box(panel,0x8c7b58,0,.235,0,10.03,.04,2.88);
@@ -1088,54 +1340,49 @@ function updateEnvironment(dt){
  const h=state.hour,solar=Math.sin((h-6)/24*Math.PI*2),day=THREE.MathUtils.smoothstep(solar,-.17,.4),sunset=1-Math.min(1,Math.abs(solar)*2.8);state.night=1-day;
  const rainy=state.rain?1:0;state.wet+=(rainy-state.wet)*Math.min(1,dt*(rainy?1.3:.16));
  hemi.intensity=THREE.MathUtils.lerp(.36,1.35,day)*(1-state.wet*.42);hemi.color.set(0xc7def0);hemi.groundColor.set(0x7e6650);
- dayLight.intensity=THREE.MathUtils.lerp(.2,3.3,day)*(1-state.wet*.79);dayLight.color.set(0xffffff).lerp(new THREE.Color(0xffb269),sunset*.65);dayLight.position.set(-22+Math.cos((h-7)*Math.PI/12)*9,23+Math.max(solar,0)*20,16);
+ dayLight.intensity=THREE.MathUtils.lerp(.2,3.3,day)*(1-state.wet*.79);dayLight.color.set(0xffffff).lerp(palette.sunset,sunset*.65);dayLight.position.set(-22+Math.cos((h-7)*Math.PI/12)*9,23+Math.max(solar,0)*20,16);
  fillLight.intensity=.45+day*.5;fillLight.color.set(state.rain?0x9eafc7:0x9fc7e3);
- const bg=new THREE.Color(0x172331).lerp(new THREE.Color(0x475151),day).lerp(new THREE.Color(0x5a4b45),sunset*day*.32).lerp(new THREE.Color(0x26383e),state.wet*.7);scene.background.copy(bg);scene.fog.color.copy(bg);scene.fog.density=.007+state.wet*.005;
- studioWindowMat.color.set(0x142a43).lerp(new THREE.Color(0x8d9da2),day).lerp(new THREE.Color(0xa58a7c),sunset*day*.35).lerp(new THREE.Color(0x3f5360),state.wet*.5);
+ // Portrait framing moves the camera back: retain the same atmospheric contrast.
+ const bg=palette.background.copy(palette.night).lerp(palette.day,day).lerp(palette.dusk,sunset*day*.32).lerp(palette.rain,state.wet*.7);scene.background.copy(bg);scene.fog.color.copy(bg);scene.fog.density=(.007+state.wet*.005)*Math.min(1,51/navigation.homeDistance);
+ studioWindowMat.color.set(0x142a43).lerp(palette.windowDay,day).lerp(palette.windowDusk,sunset*day*.35).lerp(palette.windowRain,state.wet*.5);
  const lightAmount=.015+state.night*.985+state.wet*.8;glowUniforms.strength.value=lightAmount;glowUniforms.pixelRatio.value=renderer.getPixelRatio();for(const l of lamps)l.intensity=lightAmount*58;
  for(const m of architecture.windows||[]){m.emissive.set(0xff9f42);m.emissiveIntensity=.08+lightAmount*1.65;}
- roadMat.roughness=.95-state.wet*.8;roadMat.metalness=.03+state.wet*.19;roadMat.color.set(0x6d7069).lerp(new THREE.Color(0x384b4c),state.wet*.72);
+ roadMat.roughness=.95-state.wet*.8;roadMat.metalness=.03+state.wet*.19;roadMat.color.set(0x6d7069).lerp(palette.wetRoad,state.wet*.72);
  baseMaterial.envMapIntensity=.2+day*.6;renderer.toneMappingExposure=1.04+state.night*.08;
  dustPoints.material.uniforms.time.value=state.simTime;dustPoints.material.uniforms.intensity.value=[0,1,2.5][state.dust]*(1-state.wet*.97);dustPoints.material.uniforms.pixelRatio.value=renderer.getPixelRatio();dustPoints.material.uniforms.tint.value.set(0xcab792).multiplyScalar(.45+day*.55);dustPoints.visible=state.dust>0&&state.wet<.995;
  rainLines.visible=state.wet>.008;rainUniforms.time.value=state.realTime;rainUniforms.strength.value=state.rain?Math.min(1,state.wet*1.5):Math.max(0,state.wet*3-2);
  puddle.material.uniforms.wet.value=state.wet;puddle.material.uniforms.time.value=state.realTime;puddle.material.uniforms.night.value=state.night;
 }
-function updateCamera(dt){const f=Math.min(1,dt*10);azimuth+=(targetAz-azimuth)*f;polar+=(targetPolar-polar)*f;radius+=(targetRadius-radius)*f;camera.position.set(focus.x+Math.sin(azimuth)*Math.sin(polar)*radius,focus.y+Math.cos(polar)*radius,focus.z+Math.cos(azimuth)*Math.sin(polar)*radius);camera.lookAt(focus);camera.updateMatrixWorld();}
-function cycleSpeed(){state.speedIndex=(state.speedIndex+1)%speedSteps.length;state.speed=speedSteps[state.speedIndex];notify(state.speed===0?'设备已暂停，天气与观察仍可继续':`设备运行速度 · ${state.speed} ×`);updateUI();}
-function toggleDay(){state.dayCycle=!state.dayCycle;notify(state.dayCycle?'昼夜循环开启 · 每 4 分钟一个昼夜':'时间已定格在 '+formatTime());updateUI();}
-function cycleDust(){state.dust=(state.dust+1)%3;notify('施工扬尘 · '+dustNames[state.dust]);updateUI();}
-function toggleRain(){state.rain=!state.rain;notify(state.rain?'暴雨降临 · 工地照明增强':'雨势渐歇 · 地面将缓慢干燥');updateUI();}
-function resetCamera(){targetAz=.63;targetPolar=1.12;targetRadius=innerWidth<800?61:51;lastInput=performance.now();notify('已恢复沙盘全景');}
-function formatTime(){const h=Math.floor(state.hour),m=Math.floor((state.hour-h)*60);return String(h).padStart(2,'0')+':'+String(m).padStart(2,'0');}
-function updateUI(){$('time').textContent=formatTime();const h=state.hour,phase=h<5||h>=20?'夜晚':h<8?'黎明':h<16.5?'正午':'黄昏';$('phase').textContent=phase+' · '+(state.rain?'暴雨':state.wet>.1?'雨后':'晴朗');$('weatherIcon').textContent=state.rain?'☂':state.night>.7?'☾':'☀';$('speedValue').textContent=state.speed===0?'已暂停':state.speed.toFixed(1)+' ×';$('dayValue').textContent=state.dayCycle?'开启 ↻':'定格';$('dustValue').textContent=dustNames[state.dust];$('orbitValue').textContent=state.orbit?'开启 ↻':'关闭';$('rainButton').classList.toggle('active',state.rain);$('rainButton').setAttribute('aria-pressed',state.rain);$('dayButton').setAttribute('aria-pressed',state.dayCycle);knobs[0].angle=-1.8+state.speedIndex*.9;knobs[1].angle=state.dayCycle?.65:-.65;knobs[2].angle=-1.3+state.dust*1.3;}
-function pick(x,y){pointer.set(x/innerWidth*2-1,1-y/innerHeight*2);raycaster.setFromCamera(pointer,camera);return raycaster.intersectObjects(pickTargets,false)[0];}
-function bindInput(){
- const canvas=$('scene');canvas.addEventListener('pointerdown',e=>{down={x:e.clientX,y:e.clientY,lastX:e.clientX,lastY:e.clientY,id:e.pointerId,moved:false};canvas.setPointerCapture(e.pointerId);lastInput=performance.now();$('tooltip').style.display='none';});
- canvas.addEventListener('pointermove',e=>{if(down){const dx=e.clientX-down.lastX,dy=e.clientY-down.lastY;if(Math.hypot(e.clientX-down.x,e.clientY-down.y)>4)down.moved=true;targetAz-=dx*.005;targetPolar=THREE.MathUtils.clamp(targetPolar+dy*.004,.53,1.41);down.lastX=e.clientX;down.lastY=e.clientY;lastInput=performance.now();}else if(performance.now()-lastHover>65){lastHover=performance.now();const hit=pick(e.clientX,e.clientY);canvas.style.cursor=hit?'pointer':'grab';$('tooltip').style.display=hit?'block':'none';if(hit){$('tooltip').textContent=['点击调节 · 设备运行速度','点击切换 · 昼夜循环','点击切换 · 扬尘强度'][hit.object.userData.knob];$('tooltip').style.left=e.clientX+14+'px';$('tooltip').style.top=e.clientY-38+'px';}}});
- canvas.addEventListener('pointerup',e=>{if(down&&!down.moved){const hit=pick(e.clientX,e.clientY);if(hit)[cycleSpeed,toggleDay,cycleDust][hit.object.userData.knob]();}down=null;canvas.style.cursor='grab';});canvas.addEventListener('pointercancel',()=>down=null);canvas.addEventListener('pointerleave',()=>{$('tooltip').style.display='none';});
- canvas.addEventListener('wheel',e=>{e.preventDefault();targetRadius=THREE.MathUtils.clamp(targetRadius*Math.exp(e.deltaY*.0008),28,75);lastInput=performance.now();},{passive:false});
- window.addEventListener('keydown',e=>{if(e.target.matches('input,textarea,select')||e.repeat)return;if(e.code==='Space'){e.preventDefault();toggleRain();}if(e.code==='KeyR')resetCamera();if(e.code==='KeyH'){document.body.classList.toggle('clean');notify(document.body.classList.contains('clean')?'沉浸观察 · 按 H 恢复界面':'界面已恢复');}});
- $('speedButton').onclick=cycleSpeed;$('dayButton').onclick=toggleDay;$('dustButton').onclick=cycleDust;$('rainButton').onclick=toggleRain;$('homeButton').onclick=resetCamera;$('orbitButton').onclick=()=>{state.orbit=!state.orbit;lastInput=performance.now();updateUI();};
- window.addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);});
- document.addEventListener('visibilitychange',()=>{lastStamp=performance.now();});
- if(innerWidth<800)targetRadius=radius=61;
- canvas.addEventListener('webglcontextlost',e=>{e.preventDefault();notify('图形上下文暂时中断，正在等待恢复');});canvas.addEventListener('webglcontextrestored',()=>location.reload());
-}
-let lastStamp=performance.now(),frameNo=0,measureStamp=0,measureCount=0,uiStamp=0,shadowStamp=0;
-function frame(now){requestAnimationFrame(frame);if(document.hidden){lastStamp=now;return;}const rawDt=(now-lastStamp)/1000,dt=Math.min(.05,Math.max(0,rawDt));lastStamp=now;state.realTime+=dt;state.simTime+=dt*state.speed;
- machines.update(dt*state.speed,state.simTime);staff.update(dt*state.speed,state.simTime);updateEnvironment(dt);
- if(!down&&state.orbit&&now-lastInput>9000)targetAz+=dt*.021;updateCamera(dt);
- for(const k of knobs)k.group.rotation.y+=(k.angle-k.group.rotation.y)*Math.min(1,dt*12);
- scene.updateMatrixWorld(true);if(glowPoints){const a=glowPoints.geometry.attributes.position;glows.forEach((g,i)=>{tempV.copy(g.pos).applyMatrix4(g.parent.matrixWorld);a.setXYZ(i,tempV.x,tempV.y,tempV.z);});a.needsUpdate=true;}
- // Shadow map at 24 Hz bounds shadow cost while rigs and particles render every frame.
- if(now-shadowStamp>42){renderer.shadowMap.needsUpdate=true;shadowStamp=now;}
+// Fixed upper render rate avoids spending 120 refreshes/second on a 60 FPS model.
+let lastStamp=0,lastRenderStamp=0,frameNo=0,measureStamp=0,measureCount=0,uiStamp=0,shadowStamp=0;
+function resetFrameClock(){const now=performance.now();lastStamp=lastRenderStamp=measureStamp=now;measureCount=0;slowWindows=fastWindows=0;lastInput=now;}
+function frame(now){
+ requestAnimationFrame(frame);
+ if(document.hidden||restoringContext){lastStamp=lastRenderStamp=now;return;}
+ const interval=1000/60,elapsed=now-lastRenderStamp;
+ if(elapsed<interval-.65)return;
+ // Carry the fractional interval so 90 / 144 Hz screens do not fall to 45 / 48 FPS.
+ lastRenderStamp+=Math.floor((elapsed+.65)/interval)*interval;
+ const cpuStart=performance.now(),rawDt=(now-lastStamp)/1000,dt=Math.min(.05,Math.max(0,rawDt));
+ lastStamp=now;state.realTime+=dt;state.simTime+=dt*state.speed;
+ if(state.speed>0){machines.update(dt*state.speed,state.simTime);staff.update(dt*state.speed,state.simTime);}
+ updateEnvironment(dt);
+ if(!touches.size&&state.orbit&&!settingsOpen&&now-lastInput>9000)targetAz+=dt*.021;
+ updateCamera(dt);
+ for(const k of knobs)k.group.rotation.y+=(k.angle-k.group.rotation.y)*(1-Math.exp(-dt*12));
+ scene.updateMatrixWorld(true);
+ if(glowPoints&&glowUniforms.strength.value>.02){const a=glowPoints.geometry.attributes.position;for(let i=0;i<glows.length;i++){const g=glows[i];tempV.copy(g.pos).applyMatrix4(g.parent.matrixWorld);a.setXYZ(i,tempV.x,tempV.y,tempV.z);}a.needsUpdate=true;}
+ // Shadow updates are independent of rendering and simulation rate.
+ if(renderer.shadowMap.enabled&&now-shadowStamp>42){renderer.shadowMap.needsUpdate=true;shadowStamp=now;}
  renderer.render(scene,camera);frameNo++;measureCount++;
- if(rawDt<.2){metric.frameTimes.push(rawDt*1000);if(metric.frameTimes.length>600)metric.frameTimes.shift();}
- if(now-measureStamp>1000){metric.fps=Math.round(measureCount*1000/(now-measureStamp));metric.draws=renderer.info.render.calls;metric.triangles=renderer.info.render.triangles;$('fps').textContent=metric.fps+' FPS';if(frameNo>240&&metric.fps<48&&renderer.getPixelRatio()>.8){renderer.setPixelRatio(Math.max(.8,renderer.getPixelRatio()-.15));metric.quality=renderer.getPixelRatio();}measureStamp=now;measureCount=0;}
- if(now-uiStamp>450){updateUI();uiStamp=now;}
+ metric.cpuFrameMs+=(performance.now()-cpuStart-metric.cpuFrameMs)*.04;
+ if(rawDt>0&&rawDt<.2){metric.frameTimes.push(rawDt*1000);if(metric.frameTimes.length>600)metric.frameTimes.shift();}
+ if(now-measureStamp>=1000){metric.fps=Math.round(measureCount*1000/(now-measureStamp));metric.draws=renderer.info.render.calls;metric.triangles=renderer.info.render.triangles;setText('fps',metric.fps+' FPS');adjustQuality(metric.fps,now);measureStamp=now;measureCount=0;}
+ if(now-uiStamp>450){updateClockUI();uiStamp=now;}
 }
 window.addEventListener('error',e=>{if(!window.__sandbox)fail(e.error||new Error(e.message));});
 setTimeout(()=>{try{initialize();}catch(e){fail(e);}},50);
 
 </script>
-</body></html>
+</body>
+</html>

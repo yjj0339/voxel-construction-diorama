@@ -1,24 +1,27 @@
 const state={speed:1,speedIndex:2,dayCycle:true,hour:16.33,dust:1,rain:false,orbit:true,simTime:0,realTime:0,wet:0,night:0};
 const speedSteps=[0,.5,1,2,4],dustNames=['关闭','轻盈','浓郁'];
-let renderer,camera,machines,staff,architecture,dayLight,hemi,fillLight,glowPoints,dustPoints,rainLines,puddle,envMap;
+let renderer,camera,machines,staff,architecture,dayLight,hemi,fillLight,glowPoints,dustPoints,rainLines,puddle,envMap,envSource,envTarget,lowPower=false;
 const lamps=[],knobs=[],pickTargets=[],rainUniforms={time:{value:0},strength:{value:0}},glowUniforms={strength:{value:0},pixelRatio:{value:1}};
-let azimuth=.63,polar=1.12,radius=51,targetAz=.63,targetPolar=1.12,targetRadius=51,lastInput=0,down=null,lastHover=0,toastTimer=0;
-const focus=new THREE.Vector3(0,3.5,0),raycaster=new THREE.Raycaster(),pointer=new THREE.Vector2();
-const tempV=new THREE.Vector3(),glowPositions=[],metric={fps:60,draws:0,triangles:0,frameTimes:[],quality:1};
+let azimuth=.63,polar=1.12,radius=51,targetAz=.63,targetPolar=1.12,targetRadius=51,lastInput=0,lastHover=0,toastTimer=0;
+const focus=new THREE.Vector3(0,4.6,0),targetFocus=focus.clone(),raycaster=new THREE.Raycaster(),pointer=new THREE.Vector2();
+const tempV=new THREE.Vector3(),metric={fps:60,draws:0,triangles:0,frameTimes:[],cpuFrameMs:0,quality:'auto',version:'2.0.0'};
+const palette={sunset:new THREE.Color(0xffb269),night:new THREE.Color(0x172331),day:new THREE.Color(0x475151),dusk:new THREE.Color(0x5a4b45),rain:new THREE.Color(0x26383e),windowDay:new THREE.Color(0x8d9da2),windowDusk:new THREE.Color(0xa58a7c),windowRain:new THREE.Color(0x3f5360),wetRoad:new THREE.Color(0x384b4c),background:new THREE.Color()};
 function notify(text){$('toast').textContent=text;$('toast').classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('toast').classList.remove('show'),2600);}
-function fail(e){console.error(e);$('loading').style.display='none';$('error').style.display='block';$('error').textContent='场景未能启动。请使用支持 WebGL 的 Chrome，并开启浏览器图形加速。\n'+e.message;}
+function fail(e){console.error(e);if(window.__boot)window.__boot.fail('未能启动三维画面。可选择流畅模式重试。'+(e.message?'（'+e.message+'）':''),true);}
+function refreshEnvironmentMap(){const pm=new THREE.PMREMGenerator(renderer),old=envTarget;envTarget=pm.fromEquirectangular(envSource);envMap=envTarget.texture;scene.environment=envMap;pm.dispose();if(old)old.dispose();}
 function initialize(){
  if(THREE.REVISION!=='160')throw new Error('Three.js version mismatch');
- renderer=new THREE.WebGLRenderer({canvas:$('scene'),antialias:true,powerPreference:'high-performance'});renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));renderer.setSize(innerWidth,innerHeight);renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.1;renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.shadowMap.autoUpdate=false;
+ lowPower=!!(coarsePointer||(navigator.hardwareConcurrency&&navigator.hardwareConcurrency<=4)||(navigator.deviceMemory&&navigator.deviceMemory<=4));loadPreferences();
+ renderer=new THREE.WebGLRenderer({canvas:$('scene'),antialias:!lowPower,powerPreference:'high-performance'});renderer.setPixelRatio(qualityBudget().dpr);renderer.setSize(innerWidth,innerHeight);renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.1;renderer.shadowMap.enabled=qualityBudget().shadows;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.shadowMap.autoUpdate=false;
  camera=new THREE.PerspectiveCamera(43,innerWidth/innerHeight,.3,210);scene.background=new THREE.Color(0x39464a);scene.fog=new THREE.FogExp2(0x39464a,.008);
- const et=canvasTexture(256,128,(c,w,h)=>{const g=c.createLinearGradient(0,0,0,h);g.addColorStop(0,'#bac4c6');g.addColorStop(.45,'#b6bbb3');g.addColorStop(.52,'#71776e');g.addColorStop(1,'#292826');c.fillStyle=g;c.fillRect(0,0,w,h);c.fillStyle='#f9ebcf';c.fillRect(25,22,36,40);c.fillStyle='#b3c3cb';c.fillRect(155,15,65,32);});et.mapping=THREE.EquirectangularReflectionMapping;const pm=new THREE.PMREMGenerator(renderer);envMap=pm.fromEquirectangular(et).texture;scene.environment=envMap;et.dispose();pm.dispose();
+ envSource=canvasTexture(256,128,(c,w,h)=>{const g=c.createLinearGradient(0,0,0,h);g.addColorStop(0,'#bac4c6');g.addColorStop(.45,'#b6bbb3');g.addColorStop(.52,'#71776e');g.addColorStop(1,'#292826');c.fillStyle=g;c.fillRect(0,0,w,h);c.fillStyle='#f9ebcf';c.fillRect(25,22,36,40);c.fillStyle='#b3c3cb';c.fillRect(155,15,65,32);});envSource.mapping=THREE.EquirectangularReflectionMapping;refreshEnvironmentMap();
  hemi=new THREE.HemisphereLight(0xd9e9f0,0x8e7352,2.25);scene.add(hemi);dayLight=new THREE.DirectionalLight(0xffd59b,3.6);dayLight.position.set(-20,36,17);dayLight.castShadow=true;dayLight.shadow.mapSize.set(2048,2048);Object.assign(dayLight.shadow.camera,{left:-26,right:26,top:23,bottom:-22,near:1,far:100});dayLight.shadow.bias=-.00025;dayLight.shadow.normalBias=.025;dayLight.target.position.set(0,2,0);scene.add(dayLight,dayLight.target);fillLight=new THREE.DirectionalLight(0x9fc7e3,.85);fillLight.position.set(20,18,-18);scene.add(fillLight);
  buildTable();architecture=buildArchitecture();machines=buildMachinery();staff=buildWorkers();pruneLooseGravel(architecture,staff);buildPhysicalControls();buildIllumination();buildParticles();buildPuddles();flushBatches();
  // Shared static cuboids are a single color-instanced draw; only articulated parts move separately.
- scene.updateMatrixWorld(true);createGlowBatch();updateCamera(1);bindInput();updateUI();updateEnvironment(0);renderer.shadowMap.needsUpdate=true;renderer.compile(scene,camera);renderer.render(scene,camera);
+ scene.updateMatrixWorld(true);scene.matrixWorldAutoUpdate=false;createGlowBatch();bindInput();applyQuality();updateCamera(1);updateEnvironment(0);renderer.shadowMap.needsUpdate=true;renderer.compile(scene,camera);renderer.render(scene,camera);
  $('loading').style.opacity=0;setTimeout(()=>$('loading').style.display='none',650);
- window.__sandbox={state,scene,camera,renderer,machines,staff,architecture,metric,knobs,actions:{speed:cycleSpeed,day:toggleDay,dust:cycleDust,rain:toggleRain,reset:resetCamera},setHour(h){state.hour=h;updateEnvironment(0);updateUI();},step(dt){state.simTime+=dt;machines.update(dt,state.simTime);staff.update(dt,state.simTime);scene.updateMatrixWorld(true);},getStats(){return {revision:THREE.REVISION,instances:instanceCount,workers:staff.count,drawCalls:renderer.info.render.calls,triangles:renderer.info.render.triangles,fps:metric.fps,dpr:renderer.getPixelRatio(),geometries:renderer.info.memory.geometries,textures:renderer.info.memory.textures,vehicleAudit:machines.audit?.(),workerAudit:staff.audit?.()};},projectKnob(i){const v=knobs[i].group.getWorldPosition(new THREE.Vector3());v.y+=.5;v.project(camera);return {x:(v.x*.5+.5)*innerWidth,y:(-.5*v.y+.5)*innerHeight};}};
- requestAnimationFrame(frame);
+ window.__sandbox={state,scene,camera,renderer,machines,staff,architecture,metric,knobs,lowPower,navigation,actions:{speed:cycleSpeed,pause:togglePause,quality:cycleQuality,day:toggleDay,dust:cycleDust,rain:toggleRain,reset:resetCamera},setHour(h){state.hour=THREE.MathUtils.clamp(h,0,23.99);updateEnvironment(0);updateUI();},step(dt){state.simTime+=dt;machines.update(dt,state.simTime);staff.update(dt,state.simTime);scene.updateMatrixWorld(true);},getStats(){return {version:metric.version,revision:THREE.REVISION,instances:instanceCount,workers:staff.count,drawCalls:renderer.info.render.calls,triangles:renderer.info.render.triangles,fps:metric.fps,cpuFrameMs:metric.cpuFrameMs,dpr:renderer.getPixelRatio(),geometries:renderer.info.memory.geometries,textures:renderer.info.memory.textures,vehicleAudit:machines.audit?machines.audit():null,workerAudit:staff.audit?staff.audit():null,lowPower,quality:qualityMode,shadows:renderer.shadowMap.enabled,activePointers:touches.size};},projectKnob(i){const v=knobs[i].group.getWorldPosition(new THREE.Vector3());v.y+=.5;v.project(camera);return {x:(v.x*.5+.5)*viewWidth,y:(-.5*v.y+.5)*viewHeight};}};
+ window.__boot.ready();$('error').style.display='none';resetFrameClock();requestAnimationFrame(frame);
 }
 function buildPhysicalControls(){
  const panel=group(scene,0,.12,12.95);box(panel,0x253238,0,.11,0,10.1,.22,2.95);box(panel,0x8c7b58,0,.235,0,10.03,.04,2.88);
@@ -54,51 +57,45 @@ function updateEnvironment(dt){
  const h=state.hour,solar=Math.sin((h-6)/24*Math.PI*2),day=THREE.MathUtils.smoothstep(solar,-.17,.4),sunset=1-Math.min(1,Math.abs(solar)*2.8);state.night=1-day;
  const rainy=state.rain?1:0;state.wet+=(rainy-state.wet)*Math.min(1,dt*(rainy?1.3:.16));
  hemi.intensity=THREE.MathUtils.lerp(.36,1.35,day)*(1-state.wet*.42);hemi.color.set(0xc7def0);hemi.groundColor.set(0x7e6650);
- dayLight.intensity=THREE.MathUtils.lerp(.2,3.3,day)*(1-state.wet*.79);dayLight.color.set(0xffffff).lerp(new THREE.Color(0xffb269),sunset*.65);dayLight.position.set(-22+Math.cos((h-7)*Math.PI/12)*9,23+Math.max(solar,0)*20,16);
+ dayLight.intensity=THREE.MathUtils.lerp(.2,3.3,day)*(1-state.wet*.79);dayLight.color.set(0xffffff).lerp(palette.sunset,sunset*.65);dayLight.position.set(-22+Math.cos((h-7)*Math.PI/12)*9,23+Math.max(solar,0)*20,16);
  fillLight.intensity=.45+day*.5;fillLight.color.set(state.rain?0x9eafc7:0x9fc7e3);
- const bg=new THREE.Color(0x172331).lerp(new THREE.Color(0x475151),day).lerp(new THREE.Color(0x5a4b45),sunset*day*.32).lerp(new THREE.Color(0x26383e),state.wet*.7);scene.background.copy(bg);scene.fog.color.copy(bg);scene.fog.density=.007+state.wet*.005;
- studioWindowMat.color.set(0x142a43).lerp(new THREE.Color(0x8d9da2),day).lerp(new THREE.Color(0xa58a7c),sunset*day*.35).lerp(new THREE.Color(0x3f5360),state.wet*.5);
+ // Portrait framing moves the camera back: retain the same atmospheric contrast.
+ const bg=palette.background.copy(palette.night).lerp(palette.day,day).lerp(palette.dusk,sunset*day*.32).lerp(palette.rain,state.wet*.7);scene.background.copy(bg);scene.fog.color.copy(bg);scene.fog.density=(.007+state.wet*.005)*Math.min(1,51/navigation.homeDistance);
+ studioWindowMat.color.set(0x142a43).lerp(palette.windowDay,day).lerp(palette.windowDusk,sunset*day*.35).lerp(palette.windowRain,state.wet*.5);
  const lightAmount=.015+state.night*.985+state.wet*.8;glowUniforms.strength.value=lightAmount;glowUniforms.pixelRatio.value=renderer.getPixelRatio();for(const l of lamps)l.intensity=lightAmount*58;
  for(const m of architecture.windows||[]){m.emissive.set(0xff9f42);m.emissiveIntensity=.08+lightAmount*1.65;}
- roadMat.roughness=.95-state.wet*.8;roadMat.metalness=.03+state.wet*.19;roadMat.color.set(0x6d7069).lerp(new THREE.Color(0x384b4c),state.wet*.72);
+ roadMat.roughness=.95-state.wet*.8;roadMat.metalness=.03+state.wet*.19;roadMat.color.set(0x6d7069).lerp(palette.wetRoad,state.wet*.72);
  baseMaterial.envMapIntensity=.2+day*.6;renderer.toneMappingExposure=1.04+state.night*.08;
  dustPoints.material.uniforms.time.value=state.simTime;dustPoints.material.uniforms.intensity.value=[0,1,2.5][state.dust]*(1-state.wet*.97);dustPoints.material.uniforms.pixelRatio.value=renderer.getPixelRatio();dustPoints.material.uniforms.tint.value.set(0xcab792).multiplyScalar(.45+day*.55);dustPoints.visible=state.dust>0&&state.wet<.995;
  rainLines.visible=state.wet>.008;rainUniforms.time.value=state.realTime;rainUniforms.strength.value=state.rain?Math.min(1,state.wet*1.5):Math.max(0,state.wet*3-2);
  puddle.material.uniforms.wet.value=state.wet;puddle.material.uniforms.time.value=state.realTime;puddle.material.uniforms.night.value=state.night;
 }
-function updateCamera(dt){const f=Math.min(1,dt*10);azimuth+=(targetAz-azimuth)*f;polar+=(targetPolar-polar)*f;radius+=(targetRadius-radius)*f;camera.position.set(focus.x+Math.sin(azimuth)*Math.sin(polar)*radius,focus.y+Math.cos(polar)*radius,focus.z+Math.cos(azimuth)*Math.sin(polar)*radius);camera.lookAt(focus);camera.updateMatrixWorld();}
-function cycleSpeed(){state.speedIndex=(state.speedIndex+1)%speedSteps.length;state.speed=speedSteps[state.speedIndex];notify(state.speed===0?'设备已暂停，天气与观察仍可继续':`设备运行速度 · ${state.speed} ×`);updateUI();}
-function toggleDay(){state.dayCycle=!state.dayCycle;notify(state.dayCycle?'昼夜循环开启 · 每 4 分钟一个昼夜':'时间已定格在 '+formatTime());updateUI();}
-function cycleDust(){state.dust=(state.dust+1)%3;notify('施工扬尘 · '+dustNames[state.dust]);updateUI();}
-function toggleRain(){state.rain=!state.rain;notify(state.rain?'暴雨降临 · 工地照明增强':'雨势渐歇 · 地面将缓慢干燥');updateUI();}
-function resetCamera(){targetAz=.63;targetPolar=1.12;targetRadius=innerWidth<800?61:51;lastInput=performance.now();notify('已恢复沙盘全景');}
-function formatTime(){const h=Math.floor(state.hour),m=Math.floor((state.hour-h)*60);return String(h).padStart(2,'0')+':'+String(m).padStart(2,'0');}
-function updateUI(){$('time').textContent=formatTime();const h=state.hour,phase=h<5||h>=20?'夜晚':h<8?'黎明':h<16.5?'正午':'黄昏';$('phase').textContent=phase+' · '+(state.rain?'暴雨':state.wet>.1?'雨后':'晴朗');$('weatherIcon').textContent=state.rain?'☂':state.night>.7?'☾':'☀';$('speedValue').textContent=state.speed===0?'已暂停':state.speed.toFixed(1)+' ×';$('dayValue').textContent=state.dayCycle?'开启 ↻':'定格';$('dustValue').textContent=dustNames[state.dust];$('orbitValue').textContent=state.orbit?'开启 ↻':'关闭';$('rainButton').classList.toggle('active',state.rain);$('rainButton').setAttribute('aria-pressed',state.rain);$('dayButton').setAttribute('aria-pressed',state.dayCycle);knobs[0].angle=-1.8+state.speedIndex*.9;knobs[1].angle=state.dayCycle?.65:-.65;knobs[2].angle=-1.3+state.dust*1.3;}
-function pick(x,y){pointer.set(x/innerWidth*2-1,1-y/innerHeight*2);raycaster.setFromCamera(pointer,camera);return raycaster.intersectObjects(pickTargets,false)[0];}
-function bindInput(){
- const canvas=$('scene');canvas.addEventListener('pointerdown',e=>{down={x:e.clientX,y:e.clientY,lastX:e.clientX,lastY:e.clientY,id:e.pointerId,moved:false};canvas.setPointerCapture(e.pointerId);lastInput=performance.now();$('tooltip').style.display='none';});
- canvas.addEventListener('pointermove',e=>{if(down){const dx=e.clientX-down.lastX,dy=e.clientY-down.lastY;if(Math.hypot(e.clientX-down.x,e.clientY-down.y)>4)down.moved=true;targetAz-=dx*.005;targetPolar=THREE.MathUtils.clamp(targetPolar+dy*.004,.53,1.41);down.lastX=e.clientX;down.lastY=e.clientY;lastInput=performance.now();}else if(performance.now()-lastHover>65){lastHover=performance.now();const hit=pick(e.clientX,e.clientY);canvas.style.cursor=hit?'pointer':'grab';$('tooltip').style.display=hit?'block':'none';if(hit){$('tooltip').textContent=['点击调节 · 设备运行速度','点击切换 · 昼夜循环','点击切换 · 扬尘强度'][hit.object.userData.knob];$('tooltip').style.left=e.clientX+14+'px';$('tooltip').style.top=e.clientY-38+'px';}}});
- canvas.addEventListener('pointerup',e=>{if(down&&!down.moved){const hit=pick(e.clientX,e.clientY);if(hit)[cycleSpeed,toggleDay,cycleDust][hit.object.userData.knob]();}down=null;canvas.style.cursor='grab';});canvas.addEventListener('pointercancel',()=>down=null);canvas.addEventListener('pointerleave',()=>{$('tooltip').style.display='none';});
- canvas.addEventListener('wheel',e=>{e.preventDefault();targetRadius=THREE.MathUtils.clamp(targetRadius*Math.exp(e.deltaY*.0008),28,75);lastInput=performance.now();},{passive:false});
- window.addEventListener('keydown',e=>{if(e.target.matches('input,textarea,select')||e.repeat)return;if(e.code==='Space'){e.preventDefault();toggleRain();}if(e.code==='KeyR')resetCamera();if(e.code==='KeyH'){document.body.classList.toggle('clean');notify(document.body.classList.contains('clean')?'沉浸观察 · 按 H 恢复界面':'界面已恢复');}});
- $('speedButton').onclick=cycleSpeed;$('dayButton').onclick=toggleDay;$('dustButton').onclick=cycleDust;$('rainButton').onclick=toggleRain;$('homeButton').onclick=resetCamera;$('orbitButton').onclick=()=>{state.orbit=!state.orbit;lastInput=performance.now();updateUI();};
- window.addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);});
- document.addEventListener('visibilitychange',()=>{lastStamp=performance.now();});
- if(innerWidth<800)targetRadius=radius=61;
- canvas.addEventListener('webglcontextlost',e=>{e.preventDefault();notify('图形上下文暂时中断，正在等待恢复');});canvas.addEventListener('webglcontextrestored',()=>location.reload());
-}
-let lastStamp=performance.now(),frameNo=0,measureStamp=0,measureCount=0,uiStamp=0,shadowStamp=0;
-function frame(now){requestAnimationFrame(frame);if(document.hidden){lastStamp=now;return;}const rawDt=(now-lastStamp)/1000,dt=Math.min(.05,Math.max(0,rawDt));lastStamp=now;state.realTime+=dt;state.simTime+=dt*state.speed;
- machines.update(dt*state.speed,state.simTime);staff.update(dt*state.speed,state.simTime);updateEnvironment(dt);
- if(!down&&state.orbit&&now-lastInput>9000)targetAz+=dt*.021;updateCamera(dt);
- for(const k of knobs)k.group.rotation.y+=(k.angle-k.group.rotation.y)*Math.min(1,dt*12);
- scene.updateMatrixWorld(true);if(glowPoints){const a=glowPoints.geometry.attributes.position;glows.forEach((g,i)=>{tempV.copy(g.pos).applyMatrix4(g.parent.matrixWorld);a.setXYZ(i,tempV.x,tempV.y,tempV.z);});a.needsUpdate=true;}
- // Shadow map at 24 Hz bounds shadow cost while rigs and particles render every frame.
- if(now-shadowStamp>42){renderer.shadowMap.needsUpdate=true;shadowStamp=now;}
+// Fixed upper render rate avoids spending 120 refreshes/second on a 60 FPS model.
+let lastStamp=0,lastRenderStamp=0,frameNo=0,measureStamp=0,measureCount=0,uiStamp=0,shadowStamp=0;
+function resetFrameClock(){const now=performance.now();lastStamp=lastRenderStamp=measureStamp=now;measureCount=0;slowWindows=fastWindows=0;lastInput=now;}
+function frame(now){
+ requestAnimationFrame(frame);
+ if(document.hidden||restoringContext){lastStamp=lastRenderStamp=now;return;}
+ const interval=1000/60,elapsed=now-lastRenderStamp;
+ if(elapsed<interval-.65)return;
+ // Carry the fractional interval so 90 / 144 Hz screens do not fall to 45 / 48 FPS.
+ lastRenderStamp+=Math.floor((elapsed+.65)/interval)*interval;
+ const cpuStart=performance.now(),rawDt=(now-lastStamp)/1000,dt=Math.min(.05,Math.max(0,rawDt));
+ lastStamp=now;state.realTime+=dt;state.simTime+=dt*state.speed;
+ if(state.speed>0){machines.update(dt*state.speed,state.simTime);staff.update(dt*state.speed,state.simTime);}
+ updateEnvironment(dt);
+ if(!touches.size&&state.orbit&&!settingsOpen&&now-lastInput>9000)targetAz+=dt*.021;
+ updateCamera(dt);
+ for(const k of knobs)k.group.rotation.y+=(k.angle-k.group.rotation.y)*(1-Math.exp(-dt*12));
+ scene.updateMatrixWorld(true);
+ if(glowPoints&&glowUniforms.strength.value>.02){const a=glowPoints.geometry.attributes.position;for(let i=0;i<glows.length;i++){const g=glows[i];tempV.copy(g.pos).applyMatrix4(g.parent.matrixWorld);a.setXYZ(i,tempV.x,tempV.y,tempV.z);}a.needsUpdate=true;}
+ // Shadow updates are independent of rendering and simulation rate.
+ if(renderer.shadowMap.enabled&&now-shadowStamp>42){renderer.shadowMap.needsUpdate=true;shadowStamp=now;}
  renderer.render(scene,camera);frameNo++;measureCount++;
- if(rawDt<.2){metric.frameTimes.push(rawDt*1000);if(metric.frameTimes.length>600)metric.frameTimes.shift();}
- if(now-measureStamp>1000){metric.fps=Math.round(measureCount*1000/(now-measureStamp));metric.draws=renderer.info.render.calls;metric.triangles=renderer.info.render.triangles;$('fps').textContent=metric.fps+' FPS';if(frameNo>240&&metric.fps<48&&renderer.getPixelRatio()>.8){renderer.setPixelRatio(Math.max(.8,renderer.getPixelRatio()-.15));metric.quality=renderer.getPixelRatio();}measureStamp=now;measureCount=0;}
- if(now-uiStamp>450){updateUI();uiStamp=now;}
+ metric.cpuFrameMs+=(performance.now()-cpuStart-metric.cpuFrameMs)*.04;
+ if(rawDt>0&&rawDt<.2){metric.frameTimes.push(rawDt*1000);if(metric.frameTimes.length>600)metric.frameTimes.shift();}
+ if(now-measureStamp>=1000){metric.fps=Math.round(measureCount*1000/(now-measureStamp));metric.draws=renderer.info.render.calls;metric.triangles=renderer.info.render.triangles;setText('fps',metric.fps+' FPS');adjustQuality(metric.fps,now);measureStamp=now;measureCount=0;}
+ if(now-uiStamp>450){updateClockUI();uiStamp=now;}
 }
 window.addEventListener('error',e=>{if(!window.__sandbox)fail(e.error||new Error(e.message));});
 setTimeout(()=>{try{initialize();}catch(e){fail(e);}},50);

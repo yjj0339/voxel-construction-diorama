@@ -3,11 +3,17 @@
 // Each box is inset 0.0015 m to allow contact and floating-point noise.
 const fs = require('fs');
 const path = require('path');
+const outputDirectory = path.join(__dirname, '.verification');
+const temporaryDirectory = path.join(outputDirectory, 'tmp');
+fs.mkdirSync(temporaryDirectory, { recursive: true });
+for (const key of ['TEMP', 'TMP', 'TMPDIR']) process.env[key] = temporaryDirectory;
+const executablePath = process.env.CHROMIUM_EXECUTABLE_PATH || 'D:/OpenAI/CodexData/runtime/playwright-browsers/chromium-1234/chrome-win64/chrome.exe';
+if (!/^D:[\\/]/i.test(path.resolve(executablePath))) throw new Error('Chromium must run from drive D.');
 const { chromium } = require('D:/codexAI/tea-mart-mini-game/node_modules/playwright');
 
 (async () => {
   const browser = await chromium.launch({
-    executablePath: 'C:/Program Files/Google/Chrome/Application/chrome.exe',
+    executablePath,
     headless: true,
     args: ['--disable-gpu-vsync'],
   });
@@ -135,21 +141,35 @@ const { chromium } = require('D:/codexAI/tea-mart-mini-game/node_modules/playwri
           });
         });
       }
+      const routeViolations = [], routeStates = new Set();
+      const timeStep = .04, routeSamples = 15000;
+      let minimumVehicleCenterDistance = Infinity, minimumBucketFloorClearance = Infinity, minimumSteelBuildingClearance = Infinity;
+      for (let sample = 0; sample < routeSamples; sample++) {
+        S.step(timeStep);
+        const route = S.machines.audit();
+        if (!route.ok && routeViolations.length < 30) routeViolations.push({ sample, time: S.state.simTime, violations: route.violations });
+        minimumVehicleCenterDistance = Math.min(minimumVehicleCenterDistance, route.minimumVehicleCenterDistance);
+        minimumBucketFloorClearance = Math.min(minimumBucketFloorClearance, ...route.bucketFloorClearance);
+        minimumSteelBuildingClearance = Math.min(minimumSteelBuildingClearance, route.steelBuildingClearance);
+        for (const vehicle of S.machines.vehicles) routeStates.add(vehicle.state);
+      }
       return {
         staticCuboids: statics.length, workerParts: S.staff.mesh.count, samples: 101,
         simulatedTimeRange: [0, 148.3], toleranceMetres: .003, dynamicBoxesTested,
         broadPhaseHits: broad, confirmedHits: confirmed,
         issues: [...issues.values()].sort((a, b) => b.depth - a.depth),
+        routeAudit: { samples: routeSamples, timeStep, simulatedSeconds: routeSamples * timeStep, violations: routeViolations, minimumVehicleCenterDistance, minimumBucketFloorClearance, minimumSteelBuildingClearance, vehicleStates: [...routeStates] },
+        workerEnvelopes: S.staff.audit(),
       };
     });
     const report = {
       generatedAt: new Date().toISOString(), testedFile: filePath,
       fileModifiedAt: fs.statSync(filePath).mtime.toISOString(),
-      scope: 'All articulated worker cuboids and both excavators including tracks, turret, boom, bucket and visible soil versus all direct world static cuboid instances. 101 poses; exact OBB narrow phase. Cylinders, particles, intentionally connected machine components and moving-versus-moving pairs are outside this audit.',
-      pass: data.confirmedHits === 0 && errors.length === 0,
+      scope: 'All articulated worker cuboids and both excavators including tracks, turret, boom, bucket and visible soil versus all direct world static cuboid instances. 101 poses; exact OBB narrow phase. Separately, a 600-second time sample checks the existing vehicle-boundary, vehicle-separation, bucket-floor and steel-load constraints; worker route envelopes are checked analytically. Cylinders, particles, intentionally connected machine components and other moving-versus-moving pairs are outside the exact OBB audit.',
+      pass: data.confirmedHits === 0 && data.routeAudit.violations.length === 0 && data.workerEnvelopes.overlaps.length === 0 && errors.length === 0,
       errors, ...data,
     };
-    fs.writeFileSync(path.join(__dirname, 'collision-audit-report.json'), JSON.stringify(report, null, 2));
+    fs.writeFileSync(path.join(outputDirectory, 'collision-audit-report.json'), JSON.stringify(report, null, 2));
     console.log(JSON.stringify(report, null, 2));
     process.exitCode = report.pass ? 0 : 1;
   } finally {

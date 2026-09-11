@@ -113,6 +113,27 @@ function adjustQuality(fps,now){
  if(slowWindows>=3&&current>.7){renderer.setPixelRatio(Math.max(.7,Math.round((current-.15)*100)/100));slowWindows=0;qualityChangedAt=now;}
  else if(fastWindows>=15&&current<ceiling){renderer.setPixelRatio(Math.min(ceiling,current+.1));fastWindows=0;qualityChangedAt=now;}
 }
+function bindAction(id,action){
+ const button=$(id);let press=null,ignoreTouchClickUntil=0;
+ // Some mobile browsers suppress synthesized clicks after a canvas gesture.
+ // Activate eligible touch releases directly; keep native mouse and keyboard clicks.
+ button.addEventListener('pointerdown',e=>{
+  if(e.pointerType==='mouse'){ignoreTouchClickUntil=0;return;}
+  ignoreTouchClickUntil=performance.now()+900;
+  press=e.isPrimary&&!button.disabled?{id:e.pointerId,x:e.clientX,y:e.clientY}:null;
+ });
+ button.addEventListener('pointermove',e=>{if(press&&press.id===e.pointerId&&Math.hypot(e.clientX-press.x,e.clientY-press.y)>9)press=null;});
+ button.addEventListener('pointercancel',()=>{press=null;ignoreTouchClickUntil=performance.now()+900;});
+ button.addEventListener('lostpointercapture',()=>{press=null;});
+ button.addEventListener('pointerup',e=>{
+  if(e.pointerType==='mouse')return;
+  ignoreTouchClickUntil=performance.now()+900;const p=press;press=null;
+  if(!p||p.id!==e.pointerId||button.disabled||touches.size||Math.hypot(e.clientX-p.x,e.clientY-p.y)>9)return;
+  const r=button.getBoundingClientRect();if(!r.width||!r.height||e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)return;
+  e.preventDefault();action();
+ });
+ button.onclick=e=>{e.preventDefault();if(e.detail>0&&e.pointerType!=='mouse'&&performance.now()<ignoreTouchClickUntil)return;action();};
+}
 function bindInput(){
  const canvas=$('scene');
  canvas.addEventListener('pointerdown',e=>{
@@ -153,9 +174,8 @@ function bindInput(){
   if(e.code==='Equal'||e.code==='NumpadAdd'){markInteraction();zoomBy(.85);}if(e.code==='Minus'||e.code==='NumpadSubtract'){markInteraction();zoomBy(1.15);}
   if(e.code.startsWith('Arrow')){e.preventDefault();markInteraction();if(e.code==='ArrowLeft')targetAz-=.12;if(e.code==='ArrowRight')targetAz+=.12;if(e.code==='ArrowUp')targetPolar=Math.max(.53,targetPolar-.08);if(e.code==='ArrowDown')targetPolar=Math.min(1.38,targetPolar+.08);}
  });
- $('speedButton').onclick=cycleSpeed;$('pauseButton').onclick=togglePause;$('dayButton').onclick=toggleDay;$('dustButton').onclick=cycleDust;$('rainButton').onclick=toggleRain;$('homeButton').onclick=()=>resetCamera();
- $('orbitButton').onclick=()=>{markInteraction();state.orbit=!state.orbit;updateUI();savePreferences();};$('controlsButton').onclick=()=>setControls(!settingsOpen);$('closeControlsButton').onclick=()=>setControls(false,true);
- $('viewButton').onclick=toggleImmersive;$('exitImmersiveButton').onclick=toggleImmersive;$('qualityButton').onclick=cycleQuality;$('fullscreenButton').onclick=toggleFullscreen;refreshFullscreenUI();
+ for(const [id,action]of Object.entries({speedButton:cycleSpeed,pauseButton:togglePause,dayButton:toggleDay,dustButton:cycleDust,rainButton:toggleRain,homeButton:()=>resetCamera(),orbitButton:()=>{markInteraction();state.orbit=!state.orbit;updateUI();savePreferences();},controlsButton:()=>setControls(!settingsOpen),closeControlsButton:()=>setControls(false,true),viewButton:toggleImmersive,exitImmersiveButton:toggleImmersive,qualityButton:cycleQuality,fullscreenButton:toggleFullscreen}))bindAction(id,action);
+ bindAction('helpToggle',()=>{$('helpPanel').open=!$('helpPanel').open;});refreshFullscreenUI();
  $('timeSlider').oninput=()=>{markInteraction();state.hour=Math.min(23.99,Math.max(0,Number($('timeSlider').value)));state.dayCycle=false;updateEnvironment(0);updateUI();};$('timeSlider').onchange=savePreferences;
  window.addEventListener('resize',()=>resizeViewport());if(window.visualViewport)visualViewport.addEventListener('resize',()=>resizeViewport());document.addEventListener('fullscreenchange',()=>{resizeViewport();refreshFullscreenUI();});
  document.addEventListener('visibilitychange',()=>{cancelPointers();resetFrameClock();});window.addEventListener('pageshow',resetFrameClock);

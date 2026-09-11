@@ -71,6 +71,7 @@ async function main(){
 }
 async function regression(page,cdp,view){
  // These selectors are stable interface IDs; tests use browser-generated touch events.
+ await nativeButtonRegression(page,cdp);
  const before=await snapshot(page);check('navigation diagnostics available',!!before.nav,before.nav);await swipe(cdp,{x:150,y:350},{x:230,y:385});await page.waitForTimeout(260);const orbit=await snapshot(page);
  check('single finger orbit',distance(before.camera,orbit.camera)>.4,{before:before.nav,after:orbit.nav});
  await twoGesture(cdp,{x:135,y:400},{x:255,y:400},{x:-38,y:0},{x:38,y:0});await page.waitForTimeout(260);const pinch=await snapshot(page);
@@ -93,6 +94,17 @@ async function regression(page,cdp,view){
  }
  await controlsRegression(page,cdp,view);
  view.gestures={orbit:orbit.nav,pinch:pinch.nav,pan:pan.nav,reset:reset.nav};
+}
+async function nativeButtonRegression(page,cdp){
+ await page.evaluate(()=>{let rain=__sandbox.state.rain;window.__verificationRainTransitions=0;Object.defineProperty(__sandbox.state,'rain',{enumerable:true,configurable:true,get(){return rain;},set(value){if(value!==rain)window.__verificationRainTransitions++;rain=value;}});});
+ await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{id:1,x:140,y:340}]});await cdp.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{id:1,x:220,y:350}]});await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});
+ await page.locator('#rainButton').tap();await page.waitForTimeout(400);check('first touch button tap after a fast canvas drag works exactly once',await page.evaluate(()=>__sandbox.state.rain&&window.__verificationRainTransitions===1),await page.evaluate(()=>({rain:__sandbox.state.rain,transitions:window.__verificationRainTransitions,pointers:__sandbox.navigation.activePointers})));
+ await page.locator('#rainButton').tap();await page.waitForTimeout(400);check('normal touch tap does not double activate from synthesized click',await page.evaluate(()=>!__sandbox.state.rain&&window.__verificationRainTransitions===2));
+ const r=await page.locator('#rainButton').boundingBox(),point={id:1,x:r.x+r.width/2,y:r.y+r.height/2};
+ await touch(cdp,'touchStart',[point]);await touch(cdp,'touchMove',[{...point,x:point.x+18}]);await touch(cdp,'touchEnd',[]);await page.waitForTimeout(150);check('sliding on a touch button does not activate it',await page.evaluate(()=>!__sandbox.state.rain&&window.__verificationRainTransitions===2));
+ await touch(cdp,'touchStart',[point]);await touch(cdp,'touchCancel',[]);await page.waitForTimeout(120);check('cancelled button touch does not activate it',await page.evaluate(()=>!__sandbox.state.rain&&window.__verificationRainTransitions===2));
+ await page.evaluate(()=>{const rain=__sandbox.state.rain;Object.defineProperty(__sandbox.state,'rain',{value:rain,writable:true,enumerable:true,configurable:true});});
+ await tapControl(page,cdp,'#homeButton');await page.waitForTimeout(500);
 }
 async function controlsRegression(page,cdp,view){
  check('phone settings initially collapsed',!await page.locator('#controlPanel').isVisible());
